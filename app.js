@@ -4,10 +4,9 @@ async function main() {
     // Test connection
     await testConnection();
 
-    // Example: query Employee table
     try {
         const pool = await sql.connect(config);
-        const result = await pool.request().query("SELECT * FROM dbo.Employee");
+        const result = await pool.request().query("use University_HR_ManagementSystem;SELECT * FROM Employee");
         console.log(result.recordset);
         await pool.close();
     } catch (err) {
