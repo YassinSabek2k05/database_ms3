@@ -1,17 +1,13 @@
 const { sql, config, testConnection } = require('./config/db');
+const hrRoutes = require('./routes/hrRoutes');
+const express = require('express');
+const router = express.Router();
+const app = express();
+app.use('/api', router);
 
-async function main() {
-    // Test connection
-    await testConnection();
 
-    try {
-        const pool = await sql.connect(config);
-        const result = await pool.request().query("use University_HR_ManagementSystem;SELECT * FROM Employee");
-        console.log(result.recordset);
-        await pool.close();
-    } catch (err) {
-        console.error("Query error:", err);
-    }
-}
+app.use('/hr', hrRoutes);   
 
-main();
+app.listen(3000, () => {
+    console.log('Server is running on port 3000');
+});
