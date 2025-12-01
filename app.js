@@ -25,7 +25,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // ============ ROUTES ============
 app.get('/', (req, res) => {
-  res.render('index');
+  res.render('login');
 });
 
 app.use('/hr', hrRoutes);
