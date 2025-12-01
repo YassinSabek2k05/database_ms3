@@ -1,7 +1,7 @@
 const sql = require('mssql/msnodesqlv8');
 
 const config = {
-  connectionString: "Driver={ODBC Driver 18 for SQL Server};server=(localdb)\\MSSQLLocalDB; Initial Catalog=University_HR_ManagementSystem; Integrated Security=True",
+  connectionString: "Driver={ODBC Driver 18 for SQL Server};server=(localdb)\\MSSQLLocalDB; Initial Catalog=University_HR_ManagementSystem;Database=University_HR_ManagementSystem; Integrated Security=True",
   driver: 'msnodesqlv8'
 };
 
