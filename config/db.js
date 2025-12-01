@@ -5,7 +5,7 @@ const config = {
   driver: 'msnodesqlv8'
 };
 
-module.exports = { sql, config };
+module.exports = { sql, config, testConnection };
 
 async function testConnection() {
   try {
