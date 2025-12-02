@@ -5,7 +5,7 @@ const hrRoutes = require('./routes/hrRoutes');
 const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const academicRoutes = require('./routes/academicRoutes');
-
+const flash = require('connect-flash');
 const app = express();
 
 app.set('view engine', 'ejs');
@@ -20,12 +20,19 @@ app.use(session({
   saveUninitialized: false,
   cookie: { maxAge: 3600000 }  // 1 hour
 }));
-
+app.use(flash());
+app.use((req, res, next) => {
+  res.locals.success = req.flash('success');
+  res.locals.error = req. flash('error');
+  res. locals.user = req.session. user || null;
+  res.locals.isLoggedIn = req.session. isLoggedIn || false;
+  next();
+});
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ============ ROUTES ============
 app.get('/', (req, res) => {
-  res.render('login');
+  res.render('login')
 });
 
 app.use('/hr', hrRoutes);

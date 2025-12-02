@@ -2,6 +2,6 @@ const express = require('express');
 const router = express.Router();
 const hrController = require('../controllers/hrController');
 
-router.get('/employees', hrController.getAllEmployees);
+router.get('/hrdashboard', hrController.getHrDashboard);
 
 module.exports = router;

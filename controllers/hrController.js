@@ -1,11 +1,15 @@
 const hrService = require('../services/hrService');
 
-exports.getAllEmployees = async (req, res) => {
-    try {
-        const employees = await hrService.getAllEmployees();
-        res.status(200).json(employees);
-    } catch (err) {
-        console.error("Error fetching employees:", err);
-        res.status(500).json({ error: "Internal Server Error" });
+exports.getHrDashboard = async (req, res) => {
+    if (!req.session.isLoggedIn || req.session.user.role !== 'hr') {
+        req.flash('error', 'Please log in as HR to access the dashboard');
+        return res.redirect('/');
     }
+    const acanrequests = await hrService.getAnAccRequests(parseInt(req.session.user.id, 10)) || [];
+    console.log('reqs'+ acanrequests);
+    res.render('hrdashboard', {
+        title: 'HR Dashboard',
+        user: req.session.user,
+        acanrequests: acanrequests
+    });
 };

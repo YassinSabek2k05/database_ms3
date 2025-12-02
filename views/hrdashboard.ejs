@@ -1,0 +1,158 @@
+<!-- views/hr/dashboard.ejs -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/variables.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/navbar.css">
+  <link rel="stylesheet" href="/css/hrdashboard.css">
+  <title>HR Dashboard</title>
+</head>
+<body>
+  <%- include('./partials/navbar') %>
+
+  <div class="dashboard-container">
+    <div class="dashboard-header">
+      <h1><i class="fas fa-chart-line"></i> HR Management Dashboard</h1>
+      <p>Welcome, <strong><%= user ? user.name : 'User' %></strong></p>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div class="tabs-container">
+      <div class="tabs-nav">
+        <button class="tab-btn active" data-tab="leave">
+          <i class="fas fa-calendar-check"></i> Accidental/Annual Leave
+        </button>
+        <button class="tab-btn" data-tab="compensation">
+          <i class="fas fa-hand-holding-heart"></i> Compensation Leave
+        </button>
+        <button class="tab-btn" data-tab="deduction-hours">
+          <i class="fas fa-hourglass-end"></i> Deduction Hours
+        </button>
+        <button class="tab-btn" data-tab="deduction-days">
+          <i class="fas fa-calendar-times"></i> Deduction Days
+        </button>
+        <button class="tab-btn" data-tab="deduction-unpaid">
+          <i class="fas fa-ban"></i> Deduction Unpaid
+        </button>
+        <button class="tab-btn" data-tab="payroll">
+          <i class="fas fa-file-invoice-dollar"></i> Generate Payroll
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab Contents -->
+    <div class="tabs-content">
+      <!-- Accidental/Annual Leave Tab -->
+      <div class="tab-pane active" id="leave">
+        <div class="tab-header">
+          <h2><i class="fas fa-calendar-check"></i> Accidental/Annual Leave</h2>
+        </div>
+<div class="table-container">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Department</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% acanrequests.forEach(row => { %>
+        <tr>
+          <td><%= row.employee_id %></td>
+          <td><%= row.first_name + ' ' + row.last_name %></td>
+          <td><%= row.dept_name %></td>
+          <td><%= row.status %></td>
+          <td><button class="approveBtn">Approve</button></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+        </div>
+      </div>
+
+      <!-- Compensation Leave Tab -->
+      <div class="tab-pane" id="compensation">
+        <div class="tab-header">
+          <h2><i class="fas fa-hand-holding-heart"></i> Compensation Leave</h2>
+        </div>
+        <div class="tab-body">
+          <p>Track and manage compensation leave for employees.</p>
+          <button class="btn btn-primary"><i class="fas fa-plus"></i> Add Compensation</button>
+        </div>
+      </div>
+
+      <!-- Deduction Hours Tab -->
+      <div class="tab-pane" id="deduction-hours">
+        <div class="tab-header">
+          <h2><i class="fas fa-hourglass-end"></i> Deduction Hours</h2>
+        </div>
+        <div class="tab-body">
+          <p>Manage hourly deductions for employees.</p>
+          <button class="btn btn-primary"><i class="fas fa-plus"></i> Add Deduction</button>
+        </div>
+      </div>
+
+      <!-- Deduction Days Tab -->
+      <div class="tab-pane" id="deduction-days">
+        <div class="tab-header">
+          <h2><i class="fas fa-calendar-times"></i> Deduction Days</h2>
+        </div>
+        <div class="tab-body">
+          <p>Manage day-based deductions for employees.</p>
+          <button class="btn btn-primary"><i class="fas fa-plus"></i> Add Deduction</button>
+        </div>
+      </div>
+
+      <!-- Deduction Unpaid Tab -->
+      <div class="tab-pane" id="deduction-unpaid">
+        <div class="tab-header">
+          <h2><i class="fas fa-ban"></i> Deduction Unpaid</h2>
+        </div>
+        <div class="tab-body">
+          <p>Track unpaid leave and deductions.</p>
+          <button class="btn btn-primary"><i class="fas fa-plus"></i> Add Unpaid Leave</button>
+        </div>
+      </div>
+
+      <!-- Generate Payroll Tab -->
+      <div class="tab-pane" id="payroll">
+        <div class="tab-header">
+          <h2><i class="fas fa-file-invoice-dollar"></i> Generate Payroll</h2>
+        </div>
+        <div class="tab-body">
+          <p>Generate payroll reports for all employees.</p>
+          <button class="btn btn-success"><i class="fas fa-cog"></i> Generate Payroll</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab switching functionality
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const tabName = this.getAttribute('data-tab');
+
+        // Remove active class from all buttons and panes
+        tabBtns.forEach(b => b.classList.remove('active'));
+        tabPanes.forEach(p => p.classList.remove('active'));
+
+        // Add active class to clicked button and corresponding pane
+        this.classList.add('active');
+        document.getElementById(tabName).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
