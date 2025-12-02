@@ -9,12 +9,14 @@ module.exports = { sql, config, testConnection };
 
 async function testConnection() {
   try {
-    const pool = await sql.connect(config);
+    // const pool = await sql.connect(config);
+    // const result = await pool. request().query(`SELECT * from employee`);
     console.log("Connected!");
+    // console.log(result);
     
     await pool.close();
   } catch (err) {
       console.error("Error:", err);
   }
 }
-
+// testConnection();
