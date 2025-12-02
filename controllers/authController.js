@@ -2,18 +2,20 @@ const { name } = require('ejs');
 const authService = require('../services/authService');
 const hrService = require('../services/hrService');
 const flash = require('connect-flash'); 
+const { json } = require('express');
 exports.authHr = async (req, res) => {
     try {
         const bool = await authService.authHr(parseInt(req.body.userid, 10),req.body.password);
         if(bool[0].success){
             const data= await hrService.getHrData(parseInt(req.body.userid, 10));
-            console.log('logged in');
+            console.log('logged in'+json(data[0]));
             req.session.user = {
             id: req.body.userid,  
             role: 'hr',
             name: data[0].first_name + ' ' + data[0].last_name,
-            data: data
+            data: data[0]
             };
+            console.log('hello'+req.session.user.data);
             req.session.isLoggedIn = true;
             req.flash('success', 'Logged in successfully as HR');
             return res.redirect('/hr/hrdashboard');
