@@ -31,16 +31,19 @@ exports.authHr = async (req, res) => {
 exports.authAdmin = async (req, res) => {
    const result = authService.authAdmin(req.body.userid,req.body.password);
    if(result){
-    req.session.user = {
-        id: req.body.userid,
-        role: 'admin'
-    };
-    req.session.isLoggedIn = true;
+        req.session.user = {
+            id: req.body.userid,
+            role: 'admin'
+        };
+        req.session.isLoggedIn = true;
+        req.flash('success', 'Logged in successfully as Admin');
+        return res.redirect('/admin/dashboard');
    }
    else{
-    req.session.isLoggedIn = false;
+        req.session.isLoggedIn = false;
+        req.flash('error', 'Invalid credentials');
+        return res.redirect('/');
    }
-   res.status(200).json(result);
 };
 exports.authAcademic = async (req, res) => {
     try {
@@ -52,14 +55,17 @@ exports.authAcademic = async (req, res) => {
             role: 'academic'
             };
             req.session.isLoggedIn = true;
+            req.flash('success', 'Logged in successfully as Academic');
+            return res.redirect('/academic/academicdashboard');
         }
         else{
             req.session.isLoggedIn = false;
+            req.flash('error', 'Invalid credentials');  
+            return res.redirect('/');
         }
-        console.log('invalid');
-        res.status(200).json(bool);
     } catch (err) {
         console.error("Error in authController authHr", err);
-        res.status(500).json({ error: "Internal Server Error" });
+        req.flash('error', 'Login error');
+        return res.redirect('/');
     }
 };

@@ -1,0 +1,465 @@
+<!-- views/admin/dashboard.ejs -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/variables.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/navbar.css">
+  <link rel="stylesheet" href="/css/admin-component-2.css">
+  <title>Admin Dashboard</title>
+</head>
+<body>
+  <%- include('./partials/navbar') %>
+  
+  <!-- Flash Messages -->
+  <div class="flash-messages">
+    <% if (success && success.length > 0) { %>
+      <div class="alert alert-success">
+        <i class="fas fa-check-circle"></i>
+        <span><%= success[0] %></span>
+        <button class="alert-close" type="button"><i class="fas fa-times"></i></button>
+      </div>
+    <% } %>
+    <% if (error && error.length > 0) { %>
+      <div class="alert alert-error">
+        <i class="fas fa-exclamation-circle"></i>
+        <span><%= error[0] %></span>
+        <button class="alert-close" type="button"><i class="fas fa-times"></i></button>
+      </div>
+    <% } %>
+  </div>
+
+  <div class="dashboard-container admin">
+    <div class="admin-header">
+      <h1><i class="fas fa-user-shield"></i> Admin Operations Dashboard</h1>
+      <p>Welcome, <strong><%= user ? user.name : 'Admin User' %></strong> | Manage system operations and employee data</p>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div class="admin-tabs-container">
+      <div class="admin-tabs-nav">
+        <button class="admin-tab-btn active" data-tab="yesterday-attendance">
+          <i class="fas fa-calendar-day"></i> Yesterday's Attendance
+        </button>
+        <button class="admin-tab-btn" data-tab="winter-performance">
+          <i class="fas fa-chart-line"></i> Winter Performance
+        </button>
+        <button class="admin-tab-btn" data-tab="holiday-cleanup">
+          <i class="fas fa-umbrella-beach"></i> Holiday Cleanup
+        </button>
+        <button class="admin-tab-btn" data-tab="employee-cleanup">
+          <i class="fas fa-user-times"></i> Employee Cleanup
+        </button>
+        <button class="admin-tab-btn" data-tab="replace-employee">
+          <i class="fas fa-exchange-alt"></i> Replace Employee
+        </button>
+        <button class="admin-tab-btn" data-tab="status-update">
+          <i class="fas fa-toggle-on"></i> Status Update
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab Contents -->
+    <div class="admin-tabs-content">
+      <!-- 1. Yesterday's Attendance Tab -->
+      <div class="admin-tab-pane active" id="yesterday-attendance">
+        <div class="admin-tab-header">
+          <h2><i class="fas fa-calendar-day"></i> Yesterday's Attendance Records</h2>
+        </div>
+        <div class="admin-tab-body">
+          <div class="yesterday-section">
+            <!-- Summary Cards -->
+            <div class="yesterday-summary">
+              <div class="summary-card present">
+                <div class="summary-label">Present</div>
+                <div class="summary-value" id="present-count">0</div>
+                <div class="summary-change">+0% from previous day</div>
+              </div>
+              <div class="summary-card absent">
+                <div class="summary-label">Absent</div>
+                <div class="summary-value" id="absent-count">0</div>
+                <div class="summary-change">+0% from previous day</div>
+              </div>
+              <div class="summary-card late">
+                <div class="summary-label">Late Arrivals</div>
+                <div class="summary-value" id="late-count">0</div>
+                <div class="summary-change">+0% from previous day</div>
+              </div>
+              <div class="summary-card">
+                <div class="summary-label">Total Employees</div>
+                <div class="summary-value" id="total-count">0</div>
+                <div class="summary-change">All departments</div>
+              </div>
+            </div>
+
+            <!-- Attendance Table -->
+            <div class="attendance-table-wrapper">
+              <table class="attendance-table">
+                <thead>
+                  <tr>
+                    <th>Employee ID</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Check-in Time</th>
+                    <th>Check-out Time</th>
+                    <th>Status</th>
+                    <th>Hours Worked</th>
+                  </tr>
+                </thead>
+                <tbody id="attendance-data">
+                </tbody>
+              </table>
+            </div>
+
+            <button class="admin-btn btn-fetch mt-20" id="fetch-attendance-btn">
+              <i class="fas fa-sync"></i> Fetch Yesterday's Attendance
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Winter Performance Tab -->
+      <div class="admin-tab-pane" id="winter-performance">
+        <div class="admin-tab-header">
+          <h2><i class="fas fa-chart-line"></i> Winter Semester Performance</h2>
+        </div>
+        <div class="admin-tab-body">
+          <div class="performance-section">
+            <!-- Filters -->
+            <div class="performance-filters">
+              <div class="filter-group">
+                <label><i class="fas fa-filter"></i> Winter Semester</label>
+                <select id="semester-select">
+                  <option value="all">All Winter Semesters</option>
+                  <option value="2023-2024">Winter 2023-2024</option>
+                  <option value="2022-2023">Winter 2022-2023</option>
+                  <option value="2021-2022">Winter 2021-2022</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label><i class="fas fa-sort"></i> Sort By</label>
+                <select id="sort-select">
+                  <option value="rating">Performance Rating</option>
+                  <option value="name">Employee Name</option>
+                  <option value="department">Department</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Performance Grid -->
+            <div class="performance-grid" id="performance-grid">
+            </div>
+
+            <button class="admin-btn btn-fetch mt-20" id="fetch-performance-btn">
+              <i class="fas fa-download"></i> Fetch Winter Performance Data
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Holiday Cleanup Tab -->
+      <div class="admin-tab-pane" id="holiday-cleanup">
+        <div class="admin-tab-header">
+          <h2><i class="fas fa-umbrella-beach"></i> Holiday Attendance Cleanup</h2>
+        </div>
+        <div class="admin-tab-body">
+          <div class="holiday-section">
+            <div class="holiday-controls">
+              <div class="holiday-date-picker">
+                <div class="date-group">
+                  <label><i class="fas fa-calendar-alt"></i> Select Month</label>
+                  <input type="month" id="holiday-month" value="<%= new Date().toISOString().slice(0,7) %>">
+                </div>
+                <div class="date-group">
+                  <label><i class="fas fa-tags"></i> Holiday Type</label>
+                  <select id="holiday-type">
+                    <option value="all">All Official Holidays</option>
+                    <option value="national">National Holidays</option>
+                    <option value="religious">Religious Holidays</option>
+                    <option value="special">Special Holidays</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="holiday-list">
+              <h4 class="mb-20">Official Holidays for Selected Month</h4>
+              <div id="holiday-list-container">
+              </div>
+            </div>
+
+            <div class="button-group mt-20">
+              <button class="admin-btn btn-remove" id="remove-holiday-btn">
+                <i class="fas fa-trash-alt"></i> Remove Holiday Attendance
+              </button>
+              <button class="admin-btn" id="select-all-holidays-btn">
+                <i class="fas fa-check-square"></i> Select All
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 & 5. Employee Cleanup Tab -->
+      <div class="admin-tab-pane" id="employee-cleanup">
+        <div class="admin-tab-header">
+          <h2><i class="fas fa-user-times"></i> Employee Record Cleanup</h2>
+        </div>
+        <div class="admin-tab-body">
+          <div class="cleanup-section">
+            <!-- Employee Search -->
+            <div class="employee-search-box">
+              <input type="text" class="employee-search-input" 
+                     id="employee-search" 
+                     placeholder="Search employee by ID, name, or department...">
+              <button class="search-icon-btn" id="search-employee-btn">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+
+            <!-- Selected Employee Panel -->
+            <div class="selected-employee-panel" id="selected-employee-panel">
+              <h4 class="mb-20">Selected Employee Details</h4>
+              <div class="employee-details-grid">
+                <div class="detail-item">
+                  <label>Employee ID</label>
+                  <span id="employee-id">-</span>
+                </div>
+                <div class="detail-item">
+                  <label>Full Name</label>
+                  <span id="employee-name">-</span>
+                </div>
+                <div class="detail-item">
+                  <label>Department</label>
+                  <span id="employee-dept">-</span>
+                </div>
+                <div class="detail-item">
+                  <label>Current Month Attendance</label>
+                  <span id="attendance-count">-</span>
+                </div>
+              </div>
+
+              <!-- Cleanup Actions -->
+              <div class="cleanup-actions">
+                <button class="admin-btn btn-cleanup" id="remove-dayoff-btn">
+                  <i class="fas fa-calendar-times"></i> Remove Unattended Dayoff
+                </button>
+                <button class="admin-btn btn-cleanup" id="remove-leaves-btn">
+                  <i class="fas fa-file-medical"></i> Remove Approved Leaves
+                </button>
+              </div>
+            </div>
+
+            <div class="admin-message hidden" id="cleanup-message"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Replace Employee Tab -->
+      <div class="admin-tab-pane" id="replace-employee">
+        <div class="admin-tab-header">
+          <h2><i class="fas fa-exchange-alt"></i> Replace Employee</h2>
+        </div>
+        <div class="admin-tab-body">
+          <div class="replace-section">
+            <div class="replace-form-container">
+              <div class="replace-columns">
+                <!-- Replace From -->
+                <div class="replace-from">
+                  <div class="replace-header">
+                    <i class="fas fa-user-minus"></i>
+                    <h4>Replace From</h4>
+                  </div>
+                  <div class="employee-select-wrapper">
+                    <label>Select Employee to Replace</label>
+                    <select id="replace-from-select">
+                      <option value="">-- Select Employee --</option>
+
+                    </select>
+                  </div>
+                  <div class="employee-preview-card" id="from-employee-preview">
+                    <p class="text-center">Select an employee to view details</p>
+                  </div>
+                </div>
+
+                <!-- Arrow -->
+                <div class="replace-arrow">
+                  <i class="fas fa-arrow-right"></i>
+                </div>
+
+                <div class="replace-to">
+                  <div class="replace-header">
+                    <i class="fas fa-user-plus"></i>
+                    <h4>Replace With</h4>
+                  </div>
+                  <div class="employee-select-wrapper">
+                    <label>Select Replacement Employee</label>
+                    <select id="replace-to-select">
+                      <option value="">-- Select Employee --</option>
+                    </select>
+                  </div>
+                  <div class="employee-preview-card" id="to-employee-preview">
+                    <p class="text-center">Select an employee to view details</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Replace Details -->
+              <div class="replace-details mt-30">
+                <h4>Replacement Details</h4>
+                <div class="admin-form-group">
+                  <label><i class="fas fa-calendar-alt"></i> Effective Date</label>
+                  <input type="date" id="effective-date" required>
+                </div>
+                <div class="admin-form-group">
+                  <label><i class="fas fa-sticky-note"></i> Reason for Replacement</label>
+                  <textarea id="replacement-reason" rows="3" 
+                            placeholder="Enter reason for employee replacement..."></textarea>
+                </div>
+              </div>
+
+              <button class="admin-btn btn-replace mt-20" id="confirm-replace-btn">
+                <i class="fas fa-user-friends"></i> Confirm Employee Replacement
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. Status Update Tab -->
+      <div class="admin-tab-pane" id="status-update">
+        <div class="admin-tab-header">
+          <h2><i class="fas fa-toggle-on"></i> Update Employment Status</h2>
+        </div>
+        <div class="admin-tab-body">
+          <div class="status-section">
+            <!-- Filters -->
+            <div class="status-filters-bar">
+              <button class="status-filter active" data-status="all">
+                <i class="fas fa-users"></i> All Employees
+              </button>
+              <button class="status-filter" data-status="active">
+                <i class="fas fa-user-check"></i> Active
+              </button>
+              <button class="status-filter" data-status="leave">
+                <i class="fas fa-user-clock"></i> On Leave
+              </button>
+              <button class="status-filter" data-status="inactive">
+                <i class="fas fa-user-slash"></i> Inactive
+              </button>
+            </div>
+
+            <div class="status-table-wrapper">
+              <table class="status-table">
+                <thead>
+                  <tr>
+                    <th>Employee ID</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Current Status</th>
+                    <th>Leave End Date</th>
+                    <th>Status Action</th>
+                  </tr>
+                </thead>
+                <tbody id="status-table-body">
+                </tbody>
+              </table>
+            </div>
+
+            <div class="button-group mt-20">
+              <button class="admin-btn btn-update" id="update-status-btn">
+                <i class="fas fa-save"></i> Save All Status Changes
+              </button>
+              <button class="admin-btn" id="auto-update-btn">
+                <i class="fas fa-sync-alt"></i> Auto-Update Based on Leave Dates
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div class="modal" id="confirmation-modal">
+    <div class="modal-content">
+      <h3 id="modal-title">Confirm Action</h3>
+      <p id="modal-message">Are you sure you want to perform this action?</p>
+      <div class="modal-actions">
+        <button class="admin-btn btn-remove" id="modal-confirm-btn">Confirm</button>
+        <button class="admin-btn" id="modal-cancel-btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab switching functionality
+    const tabBtns = document.querySelectorAll('.admin-tab-btn');
+    const tabPanes = document.querySelectorAll('.admin-tab-pane');
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const tabName = this.getAttribute('data-tab');
+
+       
+        tabBtns.forEach(b => b.classList.remove('active'));
+        tabPanes.forEach(p => p.classList.remove('active'));
+
+    
+        this.classList.add('active');
+        document.getElementById(tabName).classList.add('active');
+      });
+    });
+
+    // Flash message handling
+    document.querySelectorAll('.alert').forEach(alert => {
+      const closeBtn = alert.querySelector('.alert-close');
+      
+      // Close on button click
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+          alert.classList.add('removing');
+          setTimeout(() => alert.remove(), 300);
+        });
+      }
+      
+     
+      setTimeout(() => {
+        if (alert.parentElement) {
+          alert.classList.add('removing');
+          setTimeout(() => alert.remove(), 300);
+        }
+      }, 5000);
+    });
+
+    // Modal functionality
+    const modal = document.getElementById('confirmation-modal');
+    const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+    const modalCancelBtn = document.getElementById('modal-cancel-btn');
+
+    function showModal(title, message, confirmCallback) {
+      document.getElementById('modal-title').textContent = title;
+      document.getElementById('modal-message').textContent = message;
+      modal.style.display = 'flex';
+      
+      modalConfirmBtn.onclick = function() {
+        confirmCallback();
+        modal.style.display = 'none';
+      };
+    }
+
+    modalCancelBtn.addEventListener('click', () => {
+      modal.style.display = 'none';
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

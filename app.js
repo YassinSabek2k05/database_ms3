@@ -36,7 +36,7 @@ app.get('/', (req, res) => {
 });
 app.use('/hr', hrRoutes);
 app.use('/auth', authRoutes);
-// app.use('/admin', adminRoutes);
+app.use('/admin', adminRoutes);
 // app. use('/academic', academicRoutes);
 
 app.listen(3000, () => {
