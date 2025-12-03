@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/css/variables.css">
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/navbar.css">
+  <link rel="stylesheet" href="/css/hrdashboard.css">
   <link rel="stylesheet" href="/css/admin-component-2.css">
   <title>Admin Dashboard</title>
 </head>
@@ -32,44 +33,44 @@
     <% } %>
   </div>
 
-  <div class="dashboard-container admin">
-    <div class="admin-header">
+  <div class="dashboard-container">
+    <div class="dashboard-header">
       <h1><i class="fas fa-user-shield"></i> Admin Operations Dashboard</h1>
-      <p>Welcome, <strong><%= user ? user.name : 'Admin User' %></strong> | Manage system operations and employee data</p>
+      <p>Welcome, <strong><%= user ? user.name : 'Admin User' %></strong></p>
     </div>
 
     <!-- Tabs Navigation -->
-    <div class="admin-tabs-container">
-      <div class="admin-tabs-nav">
-        <button class="admin-tab-btn active" data-tab="yesterday-attendance">
+    <div class="tabs-container">
+      <div class="tabs-nav">
+        <button class="tab-btn active" data-tab="yesterday-attendance">
           <i class="fas fa-calendar-day"></i> Yesterday's Attendance
         </button>
-        <button class="admin-tab-btn" data-tab="winter-performance">
+        <button class="tab-btn" data-tab="winter-performance">
           <i class="fas fa-chart-line"></i> Winter Performance
         </button>
-        <button class="admin-tab-btn" data-tab="holiday-cleanup">
+        <button class="tab-btn" data-tab="holiday-cleanup">
           <i class="fas fa-umbrella-beach"></i> Holiday Cleanup
         </button>
-        <button class="admin-tab-btn" data-tab="employee-cleanup">
+        <button class="tab-btn" data-tab="employee-cleanup">
           <i class="fas fa-user-times"></i> Employee Cleanup
         </button>
-        <button class="admin-tab-btn" data-tab="replace-employee">
+        <button class="tab-btn" data-tab="replace-employee">
           <i class="fas fa-exchange-alt"></i> Replace Employee
         </button>
-        <button class="admin-tab-btn" data-tab="status-update">
+        <button class="tab-btn" data-tab="status-update">
           <i class="fas fa-toggle-on"></i> Status Update
         </button>
       </div>
     </div>
 
     <!-- Tab Contents -->
-    <div class="admin-tabs-content">
+    <div class="tabs-content">
       <!-- 1. Yesterday's Attendance Tab -->
-      <div class="admin-tab-pane active" id="yesterday-attendance">
-        <div class="admin-tab-header">
+      <div class="tab-pane active" id="yesterday-attendance">
+        <div class="tab-header">
           <h2><i class="fas fa-calendar-day"></i> Yesterday's Attendance Records</h2>
         </div>
-        <div class="admin-tab-body">
+        <div class="tab-body">
           <div class="yesterday-section">
             <!-- Summary Cards -->
             <div class="yesterday-summary">
@@ -122,11 +123,11 @@
       </div>
 
       <!-- 2. Winter Performance Tab -->
-      <div class="admin-tab-pane" id="winter-performance">
-        <div class="admin-tab-header">
+      <div class="tab-pane" id="winter-performance">
+        <div class="tab-header">
           <h2><i class="fas fa-chart-line"></i> Winter Semester Performance</h2>
         </div>
-        <div class="admin-tab-body">
+        <div class="tab-body">
           <div class="performance-section">
             <!-- Filters -->
             <div class="performance-filters">
@@ -161,11 +162,11 @@
       </div>
 
       <!-- 3. Holiday Cleanup Tab -->
-      <div class="admin-tab-pane" id="holiday-cleanup">
-        <div class="admin-tab-header">
+      <div class="tab-pane" id="holiday-cleanup">
+        <div class="tab-header">
           <h2><i class="fas fa-umbrella-beach"></i> Holiday Attendance Cleanup</h2>
         </div>
-        <div class="admin-tab-body">
+        <div class="tab-body">
           <div class="holiday-section">
             <div class="holiday-controls">
               <div class="holiday-date-picker">
@@ -203,11 +204,11 @@
       </div>
 
       <!-- 4 & 5. Employee Cleanup Tab -->
-      <div class="admin-tab-pane" id="employee-cleanup">
-        <div class="admin-tab-header">
+      <div class="tab-pane" id="employee-cleanup">
+        <div class="tab-header">
           <h2><i class="fas fa-user-times"></i> Employee Record Cleanup</h2>
         </div>
-        <div class="admin-tab-body">
+        <div class="tab-body">
           <div class="cleanup-section">
             <!-- Employee Search -->
             <div class="employee-search-box">
@@ -258,11 +259,11 @@
       </div>
 
       <!-- 6. Replace Employee Tab -->
-      <div class="admin-tab-pane" id="replace-employee">
-        <div class="admin-tab-header">
+      <div class="tab-pane" id="replace-employee">
+        <div class="tab-header">
           <h2><i class="fas fa-exchange-alt"></i> Replace Employee</h2>
         </div>
-        <div class="admin-tab-body">
+        <div class="tab-body">
           <div class="replace-section">
             <div class="replace-form-container">
               <div class="replace-columns">
@@ -329,11 +330,11 @@
       </div>
 
       <!-- 7. Status Update Tab -->
-      <div class="admin-tab-pane" id="status-update">
-        <div class="admin-tab-header">
+      <div class="tab-pane" id="status-update">
+        <div class="tab-header">
           <h2><i class="fas fa-toggle-on"></i> Update Employment Status</h2>
         </div>
-        <div class="admin-tab-body">
+        <div class="tab-body">
           <div class="status-section">
             <!-- Filters -->
             <div class="status-filters-bar">
@@ -396,8 +397,8 @@
 
   <script>
     // Tab switching functionality
-    const tabBtns = document.querySelectorAll('.admin-tab-btn');
-    const tabPanes = document.querySelectorAll('.admin-tab-pane');
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabPanes = document.querySelectorAll('.tab-pane');
 
     tabBtns.forEach(btn => {
       btn.addEventListener('click', function() {
