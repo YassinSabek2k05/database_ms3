@@ -44,22 +44,25 @@
     <div class="tabs-container">
       <div class="tabs-nav">
         <button class="tab-btn active" data-tab="leave">
-          <i class="fas fa-calendar-check"></i> Accidental/Annual Leave
+          Accidental/Annual Leave
         </button>
         <button class="tab-btn" data-tab="compensation">
-          <i class="fas fa-hand-holding-heart"></i> Compensation Leave
+          Compensation Leave
+        </button>
+        <button class="tab-btn" data-tab="unpaid">
+        Unpaid Leave
         </button>
         <button class="tab-btn" data-tab="deduction-hours">
-          <i class="fas fa-hourglass-end"></i> Deduction Hours
+          Deduct Missing Hours
         </button>
         <button class="tab-btn" data-tab="deduction-days">
-          <i class="fas fa-calendar-times"></i> Deduction Days
+          Deduct Missing Days
         </button>
         <button class="tab-btn" data-tab="deduction-unpaid">
-          <i class="fas fa-ban"></i> Deduction Unpaid
+          Deduct Unpaid Leave
         </button>
         <button class="tab-btn" data-tab="payroll">
-          <i class="fas fa-file-invoice-dollar"></i> Generate Payroll
+          Generate Payroll
         </button>
       </div>
     </div>
@@ -86,10 +89,31 @@
         <div class="tab-header">
           <h2><i class="fas fa-hand-holding-heart"></i> Compensation Leave</h2>
         </div>
-        <div class="tab-body">
-          <p>Track and manage compensation leave for employees.</p>
-          <button class="btn btn-primary"><i class="fas fa-plus"></i> Add Compensation</button>
+        <% if (comprequests && comprequests.length > 0) { %>
+                <div class="tab-body">
+                  <%- include('./partials/compensation_hr', { comprequests: comprequests }) %>
+                </div>
+        <% } else { %>
+                <div class="tab-body">
+                  <p>No compensation leave requests available.</p>
+                </div>
+        <% } %>
+      </div>
+
+      <!-- Unpaid Leave Tab -->
+      <div class="tab-pane" id="unpaid">
+        <div class="tab-header">
+          <h2><i class="fas fa-ban"></i> Unpaid Leave</h2>
         </div>
+        <% if (unpaidrequests && unpaidrequests.length > 0) { %>
+                <div class="tab-body">
+                  <%- include('./partials/unpaid_hr', { unpaidrequests: unpaidrequests }) %>
+                </div>
+        <% } else { %>
+                <div class="tab-body">
+                  <p>No unpaid leave requests available.</p>
+                </div>
+        <% } %>
       </div>
 
       <!-- Deduction Hours Tab -->
@@ -98,8 +122,23 @@
           <h2><i class="fas fa-hourglass-end"></i> Deduction Hours</h2>
         </div>
         <div class="tab-body">
-          <p>Manage hourly deductions for employees.</p>
-          <button class="btn btn-primary"><i class="fas fa-plus"></i> Add Deduction</button>
+          <form class="employee-form" method="POST" action="/hr/deduct_hours">
+            <div class="form-group">
+              <label for="employee_id_hours">
+                <i class="fas fa-id-badge"></i> Employee ID
+              </label>
+              <input 
+                type="number" 
+                id="employee_id_hours" 
+                name="employee_id" 
+                placeholder="Enter employee ID"
+                required
+              >
+            </div>
+            <button type="submit" class="btn btn-primary">
+              Deduct Missing Hours
+            </button>
+          </form>
         </div>
       </div>
 
@@ -109,8 +148,23 @@
           <h2><i class="fas fa-calendar-times"></i> Deduction Days</h2>
         </div>
         <div class="tab-body">
-          <p>Manage day-based deductions for employees.</p>
-          <button class="btn btn-primary"><i class="fas fa-plus"></i> Add Deduction</button>
+          <form class="employee-form" method="POST" action="/hr/deduct_days">
+            <div class="form-group">
+              <label for="employee_id_days">
+                <i class="fas fa-id-badge"></i> Employee ID
+              </label>
+              <input 
+                type="number" 
+                id="employee_id_days" 
+                name="employee_id" 
+                placeholder="Enter employee ID"
+                required
+              >
+            </div>
+            <button type="submit" class="btn btn-primary">
+              Deduct Missing Days
+            </button>
+          </form>
         </div>
       </div>
 
@@ -120,8 +174,23 @@
           <h2><i class="fas fa-ban"></i> Deduction Unpaid</h2>
         </div>
         <div class="tab-body">
-          <p>Track unpaid leave and deductions.</p>
-          <button class="btn btn-primary"><i class="fas fa-plus"></i> Add Unpaid Leave</button>
+          <form class="employee-form" method="POST" action="/hr/deduct_unpaid">
+            <div class="form-group">
+              <label for="employee_id_unpaid">
+                <i class="fas fa-id-badge"></i> Employee ID
+              </label>
+              <input 
+                type="number" 
+                id="employee_id_unpaid" 
+                name="employee_id" 
+                placeholder="Enter employee ID"
+                required
+              >
+            </div>
+            <button type="submit" class="btn btn-primary">
+              Deduct Unpaid Leave
+            </button>
+          </form>
         </div>
       </div>
 
@@ -131,8 +200,57 @@
           <h2><i class="fas fa-file-invoice-dollar"></i> Generate Payroll</h2>
         </div>
         <div class="tab-body">
-          <p>Generate payroll reports for all employees.</p>
-          <button class="btn btn-success"><i class="fas fa-cog"></i> Generate Payroll</button>
+          <form class="payroll-form" method="POST" action="/hr/generate_payroll">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="employee_id_payroll">
+                  <i class="fas fa-id-badge"></i> Employee ID
+                </label>
+                <input 
+                  type="number" 
+                  id="employee_id_payroll" 
+                  name="employee_id" 
+                  placeholder="Enter employee ID"
+                  required
+                >
+              </div>
+
+              <div class="date-range-section">
+                <div class="date-range-header">
+                  <i class="fas fa-calendar-alt"></i> Payroll Period
+                </div>
+                <div class="date-inputs-wrapper">
+                  <div class="date-input-group">
+                    <label for="from_date_payroll">
+                      <span class="date-label">From</span>
+                      <input 
+                        type="date" 
+                        id="from_date_payroll" 
+                        name="from_date" 
+                        required
+                      >
+                    </label>
+                  </div>
+                  
+                  <div class="date-input-group">
+                    <label for="to_date_payroll">
+                      <span class="date-label">To</span>
+                      <input 
+                        type="date" 
+                        id="to_date_payroll" 
+                        name="to_date" 
+                        required
+                      >
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-file-export"></i> Generate Payroll
+            </button>
+          </form>
         </div>
       </div>
     </div>
@@ -177,6 +295,40 @@
         }
       }, 5000);
     });
+
+    // Payroll Date Range Validation
+    const fromDatePayroll = document.getElementById('from_date_payroll');
+    const toDatePayroll = document.getElementById('to_date_payroll');
+    const payrollForm = document.querySelector('.payroll-form');
+
+    if (fromDatePayroll && toDatePayroll) {
+      // Set minimum date for to_date when from_date changes
+      fromDatePayroll.addEventListener('change', () => {
+        toDatePayroll.min = fromDatePayroll.value;
+        
+        // If to_date is earlier than from_date, clear it
+        if (toDatePayroll.value && new Date(toDatePayroll.value) < new Date(fromDatePayroll.value)) {
+          toDatePayroll.value = '';
+        }
+      });
+
+      // Validate on form submit
+      if (payrollForm) {
+        payrollForm.addEventListener('submit', (e) => {
+          if (!fromDatePayroll.value || !toDatePayroll.value) {
+            e.preventDefault();
+            alert('Please select both start and end dates for the payroll period');
+            return false;
+          }
+          
+          if (new Date(toDatePayroll.value) < new Date(fromDatePayroll.value)) {
+            e.preventDefault();
+            alert('End date must be greater than or equal to start date');
+            return false;
+          }
+        });
+      }
+    }
   </script>
 </body>
 </html>

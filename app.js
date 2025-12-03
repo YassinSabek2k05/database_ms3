@@ -7,7 +7,7 @@ const adminRoutes = require('./routes/adminRoutes');
 const academicRoutes = require('./routes/academicRoutes');
 const flash = require('connect-flash');
 const app = express();
-
+const { config,sql } = require('./config/db');
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -34,7 +34,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
   res.render('login')
 });
-
 app.use('/hr', hrRoutes);
 app.use('/auth', authRoutes);
 // app.use('/admin', adminRoutes);

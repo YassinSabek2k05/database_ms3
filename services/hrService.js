@@ -39,19 +39,43 @@ exports.HR_approval_comp = async (request_ID , HR_ID) => {
 };
 //5.deduction hours: procedure
 exports.Deduction_hours = async (employee_ID) => {
-    // Implementation for calculating deduction hours
+    try {
+        const pool = await sql.connect(config);
+        await pool.request().query(`exec Deduction_hours ${employee_ID}`);
+    } catch (error) {
+        console.error("Error in Deduction_hours:", error);
+        throw error;
+    }
 };
 //6.deduction days: procedure
 exports.Deduction_days = async (employee_ID) => {
-    // Implementation for calculating deduction days
+    try {
+        const pool = await sql.connect(config);
+        await pool.request().query(`exec Deduction_days ${employee_ID}`);
+    } catch (error) {
+        console.error("Error in Deduction_days:", error);
+        throw error;
+    }
 };
 //7.deduction unpaid: procedure
 exports.Deduction_unpaid = async (employee_ID) => {
-    // Implementation for calculating unpaid deductions
+    try {
+        const pool = await sql.connect(config);
+        await pool.request().query(`exec Deduction_unpaid ${employee_ID}`);
+    } catch (error) {
+        console.error("Error in Deduction_unpaid:", error);
+        throw error;
+    }
 };
 //8.add payroll: procedure
 exports.Add_Payroll = async (employee_ID, from_date, to_date) => {
-    // Implementation for adding payroll
+    try {
+        const pool = await sql.connect(config);
+        await pool.request().query(`exec Add_Payroll ${employee_ID}, '${from_date}', '${to_date}'`);
+    } catch (error) {
+        console.error("Error in Add_Payroll:", error);
+        throw error;
+    }
 };
 exports.getAnAccRequests = async (HR_ID) => {
     const pool = await sql.connect(config);
@@ -81,7 +105,7 @@ exports.getCompRequests = async (HR_ID) => {
     );
     return result.recordset;
 }
-exports.getCompRequests = async (HR_ID) => {
+exports.getUnpaidRequests = async (HR_ID) => {
     const pool = await sql.connect(config);
     const result = await pool.request().query(`
     SELECT e.employee_id, e.first_name,e.last_name,e.dept_name, eal.status, l.request_ID

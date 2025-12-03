@@ -8,14 +8,12 @@ exports.authHr = async (req, res) => {
         const bool = await authService.authHr(parseInt(req.body.userid, 10),req.body.password);
         if(bool[0].success){
             const data= await hrService.getHrData(parseInt(req.body.userid, 10));
-            console.log('logged in'+json(data[0]));
             req.session.user = {
             id: req.body.userid,  
             role: 'hr',
             name: data[0].first_name + ' ' + data[0].last_name,
             data: data[0]
             };
-            console.log('hello'+req.session.user.data);
             req.session.isLoggedIn = true;
             req.flash('success', 'Logged in successfully as HR');
             return res.redirect('/hr/hrdashboard');
@@ -47,7 +45,6 @@ exports.authAdmin = async (req, res) => {
 exports.authAcademic = async (req, res) => {
     try {
         const bool = await authService.authAcademic(parseInt(req.body.userid, 10),req.body.password);
-        console.log('result'+bool[0]);
         if(bool[0].success){
             console.log('logged in');
             req.session.user = {
