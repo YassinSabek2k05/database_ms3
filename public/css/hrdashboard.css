@@ -46,7 +46,7 @@ body{
 
 .tabs-nav {
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     gap: 10px;
     background: #f7fafc;
     padding: 15px;
@@ -54,7 +54,6 @@ body{
     border: 2px solid #e2e8f0;
     justify-content: center;
     align-items: center;
-    overflow-x: auto;
 }
 
 .tab-btn {
@@ -70,8 +69,13 @@ body{
     display: flex;
     align-items: center;
     gap: 6px;
-    white-space: nowrap;
-    flex-shrink: 0;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow: hidden;
+    flex: 1;
+    min-width: 150px;
+    min-height: 40px;
+    justify-content: center;
 }
 
 .tab-btn:hover {
@@ -147,6 +151,7 @@ body{
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    justify-content: flex-start;
 }
 
 .tab-body p {
@@ -174,15 +179,6 @@ body{
     gap: 15px;
     flex-wrap: wrap;
     align-items: center;
-}
-
-/* Forms */
-.employee-form {
-    display: flex;
-    gap: 15px;
-    align-items: flex-end;
-    flex-wrap: wrap;
-    max-width: 500px;
 }
 
 .form-group {

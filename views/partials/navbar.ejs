@@ -4,14 +4,26 @@
 <nav class="navbar">
     <div class="container">
         <a class="navbar-brand">The Indexers HRMS</a>
+        <div class="links-contianer">
+            <ul class="links">
+                <% if (typeof navItems !== 'undefined' && navItems && navItems.length > 0) { %>
+                    <% navItems.forEach((page, index) => { %>
+                        <% if (page.index !== undefined) return; %>
+                        <li>
+                            <a class="nav-link <%= index === (navItems.find(item => item.index !== undefined)?.index || 0) ? 'active' : '' %>" href="<%= page.link %>">
+                                <%= page.name %>
+                            </a>
+                        </li>
+                    <% }) %>
+                <% } %>
+            </ul>
+        </div>
         <div id="navbarNav">
             <ul class="navbar-nav">
                 <% if (typeof user !== 'undefined' && user) { %>
                     <li>
                         <span class="nav-link">
                             <i class="fas fa-user-circle"></i> Welcome, <%= user.name %>
-
-                            
                         </span>
                     </li>
                     <li>

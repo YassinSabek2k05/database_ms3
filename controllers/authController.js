@@ -1,8 +1,5 @@
-const { name } = require('ejs');
 const authService = require('../services/authService');
 const hrService = require('../services/hrService');
-const flash = require('connect-flash'); 
-const { json } = require('express');
 exports.authHr = async (req, res) => {
     try {
         const bool = await authService.authHr(parseInt(req.body.userid, 10),req.body.password);
@@ -33,7 +30,8 @@ exports.authAdmin = async (req, res) => {
    if(result){
         req.session.user = {
             id: req.body.userid,
-            role: 'admin'
+            role: 'admin',
+            name: 'Admin User'
         };
         req.session.isLoggedIn = true;
         req.flash('success', 'Logged in successfully as Admin');

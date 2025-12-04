@@ -38,18 +38,29 @@ nav{
     gap: 0.5rem;
     display: flex;
     align-items: center;
+    flex-wrap: nowrap;
 }
 
 .nav-link {
     color: rgba(255, 255, 255, 0.85) !important;
     font-weight: 500;
     padding: 0.6rem 1.2rem !important;
-    border-radius: 6px;
     transition: all 0.3s ease;
+    text-decoration: none;
 
     display: flex;
     align-items: center;
     gap: 6px;
+}
+li{
+    list-style: none;
+}
+.nav-link:hover {
+    color: var(--color-secondary) !important;
+}
+
+.nav-link.active {
+    color: var(--color-secondary) !important;
 }
 
 .container {
@@ -58,4 +69,19 @@ nav{
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.links-contianer {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+.links{
+    text-decoration: none;
+    color: white;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
 }

@@ -70,6 +70,11 @@
   font-size: 0.95rem;
   vertical-align: middle;
   background: var(--white);
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+  overflow-wrap: break-word;
+  max-width: 150px;
 }
 
 .table tbody tr {

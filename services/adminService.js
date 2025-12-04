@@ -12,7 +12,7 @@ exports.authAdmin = async (userid, password) => {
 exports.allEmployeeProfiles = async () => {
   try {
     const pool = await sql.connect(config);
-    const result =await pool.request().query(`exec allEmployeeProfiles`);
+    const result =await pool.request().query(`select * from allEmployeeProfiles`);
     return result.recordset;
   } catch (error) {
     console.error("Error in allEmployeeProfiles:", error);
@@ -24,7 +24,7 @@ exports.allEmployeeProfiles = async () => {
 exports.NoEmployeeDept = async () => {
   try {
     const pool = await sql.connect(config);
-    const result = await pool.request().query(`exec NoEmployeeDept`);
+    const result = await pool.request().query(`select * from NoEmployeeDept`);
     return result.recordset;
   } catch (error) {
     console.error("Error in NoEmployeeDept:", error);
@@ -36,7 +36,7 @@ exports.NoEmployeeDept = async () => {
 exports.allRejectedMedicals = async () => {
    try {
     const pool = await sql.connect(config);
-    const result = await pool.request().query(`exec allRejectedMedicals`);
+    const result = await pool.request().query(`select * from allRejectedMedicals`);
     return result.recordset;
   } catch (error) {
     console.error("Error in allRejectedMedicals:", error);
@@ -60,7 +60,11 @@ exports.Remove_Deductions = async () => {
 exports.Update_Attendance = async (employee_ID, check_in_time, check_out_time) => {
     try {
     const pool = await sql.connect(config);
-    await pool.request().query(`exec Update_Attendance ${employee_ID}, ${check_in_time}, ${check_out_time}`);
+    await pool.request()
+      .input('employee_ID', sql.Int, employee_ID)
+      .input('check_in_time', sql.Time, check_in_time)
+      .input('check_out_time', sql.Time, check_out_time)
+      .execute('Update_Attendance');
   } catch (error) {
     console.error("Error in Update_Attendance:", error);
     throw error;
@@ -69,10 +73,14 @@ exports.Update_Attendance = async (employee_ID, check_in_time, check_out_time) =
 
 
 //7 
-exports.Add_holiday = async (holiday_name,from_date, to_date) => {
+exports.Add_holiday = async (holiday_name, from_date, to_date) => {
     try {
     const pool = await sql.connect(config);
-    await pool.request().query(`exec Add_holiday ${holiday_name}, ${from_date}, ${to_date}`);
+    await pool.request()
+      .input('holiday_name', sql.VarChar, holiday_name)
+      .input('from_date', sql.Date, from_date)
+      .input('to_date', sql.Date, to_date)
+      .execute('Add_holiday');
   } catch (error) {
     console.error("Error in Add_holiday:", error);
     throw error;
@@ -130,7 +138,9 @@ exports.removeHolidayAttendance = async () => {
 exports.removeUnattendedDayoff = async (employee_ID) => {
     try {
         const pool = await sql.connect(config);
-        await pool.request().query(`exec Remove_DayOff ${employee_ID}`);
+        await pool.request()
+          .input('employee_ID', sql.Int, employee_ID)
+          .execute('Remove_DayOff');
     } catch (error) {
         console.error("Error in removeUnattendedDayoff:", error);
         throw error;
@@ -141,7 +151,9 @@ exports.removeUnattendedDayoff = async (employee_ID) => {
 exports.removeApprovedLeaves = async (employee_ID) => {
     try {
         const pool = await sql.connect(config);
-        await pool.request().query(`exec Remove_Approved_Leaves ${employee_ID}`);
+        await pool.request()
+          .input('employee_ID', sql.Int, employee_ID)
+          .execute('Remove_Approved_Leaves');
     } catch (error) {
         console.error("Error in removeApprovedLeaves:", error);
         throw error;
@@ -152,7 +164,12 @@ exports.removeApprovedLeaves = async (employee_ID) => {
 exports.replaceEmployee = async (old_employee_id, new_employee_id, start_date, end_date) => {
     try {
         const pool = await sql.connect(config);
-        await pool.request().query(`exec Replace_employee ${old_employee_id}, ${new_employee_id}, '${start_date}', '${end_date}'`);
+        await pool.request()
+          .input('Emp1_ID', sql.Int, old_employee_id)
+          .input('Emp2_ID', sql.Int, new_employee_id)
+          .input('from_date', sql.Date, start_date)
+          .input('to_date', sql.Date, end_date)
+          .execute('Replace_employee');
     } catch (error) {
         console.error("Error in replaceEmployee:", error);
         throw error;
@@ -160,10 +177,10 @@ exports.replaceEmployee = async (old_employee_id, new_employee_id, start_date, e
 };
 
 // 7. update employee status
-exports.updateEmploymentStatus = async () => {
+exports.updateEmploymentStatus = async (Employee_ID) => {
     try {
         const pool = await sql.connect(config);
-        await pool.request().query(`exec Update_Employment_Status`);
+        await pool.request().input('Employee_ID', sql.Int, Employee_ID).execute('Update_Employment_Status');
     } catch (error) {
         console.error("Error in updateEmploymentStatus:", error);
         throw error;
