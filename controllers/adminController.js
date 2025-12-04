@@ -1,6 +1,37 @@
 const adminService = require('../services/adminService');
 
-exports.getAdminDashboard = async (req, res) => {
+
+exports.getAdminDashboard1 = async (req, res) => {
+    if (!req.session.isLoggedIn || req.session.user.role !== 'admin') {
+        req.flash('error', 'Please log in as Admin to access this dashboard');
+        return res.redirect('/');
+    }
+
+    let employees = [];
+    let empInDep = [];
+    let rejectedMed = []
+    let error = null;
+
+    try {
+        employees = await adminService.allEmployeeProfiles() || [];
+        empInDep = await adminService.NoEmployeeDept() || [];
+        rejectedMed = await adminService.allRejectedMedicals() || [];
+    } catch (err) {
+        console.error('Error fetching dashboard data:', err);
+        error = 'Failed to load employee data due to a server error.';
+    }
+
+    res.render('admindashboard1', {
+        title: 'Admin Dashboard',
+        user: req.session.user,
+        employees: employees,
+        empInDep: empInDep,
+        rejectedMed: rejectedMed,
+        data: req.session.user.data,
+        error: error 
+    });
+};
+exports.getAdminDashboard2 = async (req, res) => {
     if (!req.session.isLoggedIn || req.session.user.role !== 'admin') {
         req.flash('error', 'Please log in as Admin to access the dashboard');
         return res.redirect('/');
@@ -8,41 +39,131 @@ exports.getAdminDashboard = async (req, res) => {
     const attendanceData = await adminService.getYesterdayAttendance() || [];
     const performanceData = await adminService.getWinterPerformance() || [];
     const allEmployees = await adminService.getAllEmployeeProfiles() || [];
-    res.render('admindashboard', {
+    console.log(attendanceData.result);
+    res.render('admindashboard2', {
         title: 'Admin Dashboard',
         user: req.session.user,
-        attendanceData: attendanceData.data || [],
-        performanceData: performanceData.data || [],
-        allEmployees: allEmployees.data || [],
-        attendanceCount: attendanceData.count || 0,
-        performanceCount: performanceData.count || 0
+        attendanceData: attendanceData || [],
+        performanceData: performanceData || [],
+        allEmployees: allEmployees || []
     });
 };
+//malak admin component part 1
 
+//2
+exports.allEmployeeProfiles = async (req, res) => {
+    try {
+        const result = await adminService.allEmployeeProfiles();
+
+        req.flash('success', 'Employee profiles loaded successfully');
+        res.render('admindashboard', {
+            employees: result,
+            success: req.flash('success'),
+            error: req.flash('error')
+        });
+    } catch (error) {
+        console.error("Error in allEmployeeProfiles:", error);
+        req.flash('error', 'Error loading employee profiles');
+        res.redirect('/admin/admindashboard');
+    }
+};
+
+
+//3
+exports.NoEmployeeDept = async (req, res) => {
+    try {
+        const result = await adminService.NoEmployeeDept();
+
+        req.flash('success', 'Number of employees per department fetched successfully');
+        res.render('admindashboard', {
+            empInDep: result,
+            success: req.flash('success'),
+            error: req.flash('error')
+        });
+    } catch (error) {
+        console.error("Error in NoEmployeeDept:", error);
+        req.flash('error', 'Failed to fetch number of employees per department');
+        res.redirect('/admin/admindashboard');
+    }
+};
+
+
+//4
+exports.allRejectedMedicals = async (req, res) => {
+    try {
+        const result = await adminService.allRejectedMedicals();
+
+        req.flash('success', 'All rejected medical leaves fetched successfully');
+        res.render('admindashboard', {
+            rejectedMed: result,
+            success: req.flash('success'),
+            error: req.flash('error')
+        });
+    } catch (error) {
+        console.error("Error in allRejectedMedicals:", error);
+        req.flash('error', 'Failed to fetch rejected medical leaves ');
+        res.redirect('/admin/admindashboard');
+    }
+};
+
+//5
+exports.Remove_Deductions = async (req, res) => {
+    try {
+        await adminService.Remove_Deductions();
+        req.flash('success', 'Deductions removed successfully!');
+        res.redirect('/admin/admindashboard');
+    } catch (error) {
+        req.flash('error', 'Failed to remove deductions');
+        res.redirect('/admin/admindashboard');
+    }
+};
+
+//6
+exports.Update_Attendance = async (req, res) => {
+    try {
+        await adminService.Update_Attendance(parseInt(req.body.employee_id, 10), req.body.check_in_time, req.body.check_out_time);
+        req.flash('success', 'Attendance updated successfully');
+        res.redirect('/admin/admindashboard');
+    } catch (error) {
+        console.error("Error updating attendance:", error);
+        req.flash('error', 'Failed to update attendance');
+        res.redirect('/admin/admindashboard');
+    }
+};
+
+//7
+exports.Add_holiday = async (req, res) => {
+    try {
+        await adminService.Add_holiday(req.body.holiday_name, 10, req.body.from_date, req.body.to_date); 
+        req.flash('success', 'Holiday generated successfully');
+        res.redirect('/admin/admindashboard');
+    } catch (error) {
+        console.error("Error adding holiday:", error);
+        req.flash('error', 'Failed to generate holiday');
+        res.redirect('/admin/admindashboard');
+    }
+};
+
+//8
+exports.Initiate_Attendance = async (req, res) => {
+    try {
+        await adminService.Initiate_Attendance();
+        req.flash('success', 'Attendance initiated successfully!');
+        res.redirect('/admin/admindashboard');
+    } catch (error) {
+        req.flash('error', 'Failed to initiate attendance');
+        res.redirect('/admin/admindashboard');
+    }
+};
+//raghad admin component part 2
 // 1. Get yesterday attendance
 exports.getYesterdayAttendance = async (req, res) => {
     try {
         const result = await adminService.getYesterdayAttendance();
-        
-        if (req.xhr || req.headers.accept.indexOf('json') > -1) {
-            return res.status(200).json(result);
-        } else {
-            res.render('admin/attendance-yesterday', {
-                title: 'Yesterday Attendance',
-                user: req.session.user,
-                attendanceData: result.data || [],
-                count: result.count || 0
-            });
-        }
+        return result;
     } catch (err) {
-        console.error('Error getting yesterday attendance:', err);
-        
-        if (req.xhr || req.headers.accept.indexOf('json') > -1) {
-            return res.status(500).json({ error: "Internal Server Error" });
-        } else {
-            req.flash('error', 'Error fetching yesterday attendance');
-            res.redirect('/admin/dashboard');
-        }
+        req.flash('error', 'Error fetching yesterday attendance');
+        res.redirect('/admin/dashboard');
     }
 };
 
@@ -50,26 +171,10 @@ exports.getYesterdayAttendance = async (req, res) => {
 exports.getWinterPerformance = async (req, res) => {
     try {
         const result = await adminService.getWinterPerformance();
-        
-        if (req.xhr || req.headers.accept.indexOf('json') > -1) {
-            return res.status(200).json(result);
-        } else {
-            res.render('admin/winter-performance', {
-                title: 'Winter Performance',
-                user: req.session.user,
-                performanceData: result.data || [],
-                count: result.count || 0
-            });
-        }
+        return result;
     } catch (err) {
-        console.error('Error getting winter performance:', err);
-        
-        if (req.xhr || req.headers.accept.indexOf('json') > -1) {
-            return res.status(500).json({ error: "Internal Server Error" });
-        } else {
-            req.flash('error', 'Error fetching winter performance');
-            res.redirect('/admin/dashboard');
-        }
+        req.flash('error', 'Error fetching winter performance');
+        res.redirect('/admin/dashboard');
     }
 };
 
@@ -168,8 +273,6 @@ exports.authAdmin = async (req, res) => {
         const bool = await adminService.authAdmin(parseInt(req.body.userid, 10), req.body.password);
         
         if (bool[0] && bool[0].success) {
-            const data = await adminService.getAdminData(parseInt(req.body.userid, 10));
-            
             req.session.user = {
                 id: req.body.userid,
                 role: 'admin',

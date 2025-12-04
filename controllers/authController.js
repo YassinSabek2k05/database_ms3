@@ -37,7 +37,7 @@ exports.authAdmin = async (req, res) => {
         };
         req.session.isLoggedIn = true;
         req.flash('success', 'Logged in successfully as Admin');
-        return res.redirect('/admin/dashboard');
+        return res.redirect('/admin/dashboard1');
    }
    else{
         req.session.isLoggedIn = false;

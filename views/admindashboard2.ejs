@@ -1,0 +1,325 @@
+<!-- views/admin/dashboard.ejs -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/variables.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/navbar.css">
+  <link rel="stylesheet" href="/css/hrdashboard.css">
+  <link rel="stylesheet" href="/css/admin-component-2.css">
+  <title>Admin Dashboard</title>
+</head>
+<body>
+  <%- include('./partials/navbar') %>
+  
+  <!-- Flash Messages -->
+  <div class="flash-messages">
+    <% if (success && success.length > 0) { %>
+      <div class="alert alert-success">
+        <i class="fas fa-check-circle"></i>
+        <span><%= success[0] %></span>
+        <button class="alert-close" type="button"><i class="fas fa-times"></i></button>
+      </div>
+    <% } %>
+    <% if (error && error.length > 0) { %>
+      <div class="alert alert-error">
+        <i class="fas fa-exclamation-circle"></i>
+        <span><%= error[0] %></span>
+        <button class="alert-close" type="button"><i class="fas fa-times"></i></button>
+      </div>
+    <% } %>
+  </div>
+
+  <div class="dashboard-container">
+    <div class="dashboard-header">
+      <h1><i class="fas fa-user-shield"></i> Admin Operations Dashboard</h1>
+      <p>Welcome, <strong>Admin User</strong></p>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div class="tabs-container">
+      <div class="tabs-nav">
+        <button class="tab-btn active" data-tab="yesterday-attendance">
+          <i class="fas fa-calendar-day"></i> Yesterday's Attendance
+        </button>
+        <button class="tab-btn" data-tab="winter-performance">
+          <i class="fas fa-chart-line"></i> Winter Performance
+        </button>
+        <button class="tab-btn" data-tab="holiday-cleanup">
+          <i class="fas fa-umbrella-beach"></i> Holiday Cleanup
+        </button>
+        <button class="tab-btn" data-tab="employee-cleanup">
+          <i class="fas fa-user-times"></i> Employee Cleanup
+        </button>
+        <button class="tab-btn" data-tab="replace-employee">
+          <i class="fas fa-exchange-alt"></i> Replace Employee
+        </button>
+        <button class="tab-btn" data-tab="status-update">
+          <i class="fas fa-toggle-on"></i> Status Update
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab Contents -->
+    <div class="tabs-content">
+      <!-- 1. Yesterday's Attendance Tab -->
+      <div class="tab-pane active" id="yesterday-attendance">
+        <div class="tab-header" style="display: flex; justify-content: space-between; align-items: center;">
+          <h2><i class="fas fa-calendar-day"></i> Yesterday's Attendance Records</h2>
+          <form id="fetch-attendance-form" method="GET" action="/admin/dashboard" style="margin: 0;">
+            <input type="hidden" name="action" value="fetch-attendance">
+          </form>
+        </div>
+        <div class="tab-body">
+          <div class="yesterday-section">
+            <!-- Attendance Table -->
+            <%- include('./partials/yesterday', { attendanceData: attendanceData }) %>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Winter Performance Tab -->
+      <div class="tab-pane" id="winter-performance">
+        <div class="tab-header" style="display: flex; justify-content: space-between; align-items: center;">
+          <h2><i class="fas fa-chart-line"></i> Winter Semester Performance</h2>
+          <form id="fetch-performance-form" method="GET" action="/admin/dashboard" style="margin: 0;">
+            <input type="hidden" name="action" value="fetch-performance">
+            <button class="admin-btn btn-fetch" type="submit">
+              <i class="fas fa-sync"></i> Refresh Performance
+            </button>
+          </form>
+        </div>
+        <div class="tab-body">
+          <div class="performance-section">
+            <%- include('./partials/winter_performance', { performanceData: performanceData }) %>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Holiday Cleanup Tab -->
+      <div class="tab-pane" id="holiday-cleanup">
+        <div class="tab-header">
+          <h2><i class="fas fa-umbrella-beach"></i> Holiday Attendance Cleanup</h2>
+        </div>
+        <div class="tab-body">
+          <form class="employee-form" method="POST" action="/admin/remove-holiday">
+            <div class="form-group">
+              <label for="holiday-employee-id">
+                <i class="fas fa-id-badge"></i> Employee ID
+              </label>
+              <input 
+                type="number" 
+                id="holiday-employee-id" 
+                name="employee_id" 
+                placeholder="Enter employee ID"
+                required
+              >
+            </div>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-trash-alt"></i> Remove Holiday Attendance
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- 4 & 5. Employee Cleanup Tab -->
+      <div class="tab-pane" id="employee-cleanup">
+        <div class="tab-header">
+          <h2><i class="fas fa-user-times"></i> Employee Record Cleanup</h2>
+        </div>
+        <div class="tab-body">
+          <form class="employee-form" method="POST" action="/admin/remove-dayoff">
+            <div class="form-group">
+              <label for="cleanup-employee-id">
+                <i class="fas fa-id-badge"></i> Employee ID
+              </label>
+              <input 
+                type="number" 
+                id="cleanup-employee-id" 
+                name="employee_id" 
+                placeholder="Enter employee ID"
+                required
+              >
+            </div>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-calendar-times"></i> Remove Unattended Dayoff
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- 6. Replace Employee Tab -->
+      <div class="tab-pane" id="replace-employee">
+        <div class="tab-header">
+          <h2><i class="fas fa-exchange-alt"></i> Replace Employee</h2>
+        </div>
+        <div class="tab-body">
+          <div class="replace-section">
+            <div class="replace-form-container">
+              <div class="replace-columns">
+                <!-- Replace From -->
+                <div class="replace-from">
+                  <div class="replace-header">
+                    <i class="fas fa-user-minus"></i>
+                    <h4>Replace From</h4>
+                  </div>
+                  <div class="employee-select-wrapper">
+                    <label>Select Employee to Replace</label>
+                    <select id="replace-from-select">
+                      <option value="">-- Select Employee --</option>
+
+                    </select>
+                  </div>
+                  <div class="employee-preview-card" id="from-employee-preview">
+                    <p class="text-center">Select an employee to view details</p>
+                  </div>
+                </div>
+
+                <!-- Arrow -->
+                <div class="replace-arrow">
+                  <i class="fas fa-arrow-right"></i>
+                </div>
+
+                <div class="replace-to">
+                  <div class="replace-header">
+                    <i class="fas fa-user-plus"></i>
+                    <h4>Replace With</h4>
+                  </div>
+                  <div class="employee-select-wrapper">
+                    <label>Select Replacement Employee</label>
+                    <select id="replace-to-select">
+                      <option value="">-- Select Employee --</option>
+                    </select>
+                  </div>
+                  <div class="employee-preview-card" id="to-employee-preview">
+                    <p class="text-center">Select an employee to view details</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Replace Details -->
+              <div class="replace-details mt-30">
+                <h4>Replacement Details</h4>
+                <div class="admin-form-group">
+                  <label><i class="fas fa-calendar-alt"></i> Effective Date</label>
+                  <input type="date" id="effective-date" required>
+                </div>
+                <div class="admin-form-group">
+                  <label><i class="fas fa-sticky-note"></i> Reason for Replacement</label>
+                  <textarea id="replacement-reason" rows="3" 
+                            placeholder="Enter reason for employee replacement..."></textarea>
+                </div>
+              </div>
+
+              </div>
+
+              <form id="confirm-replace-form" method="POST" action="/admin/replace-employee">
+                <input type="hidden" name="action" value="replace-employee">
+                <button class="admin-btn btn-replace mt-20" type="submit">
+                  <i class="fas fa-user-friends"></i> Confirm Employee Replacement
+                </button>
+              </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. Status Update Tab -->
+      <div class="tab-pane" id="status-update">
+        <div class="tab-header">
+          <h2><i class="fas fa-toggle-on"></i> Update Employment Status</h2>
+        </div>
+        <div class="tab-body">
+          <form class="employee-form" method="POST" action="/admin/update-status">
+            <div class="form-group">
+              <label for="status-employee-id">
+                <i class="fas fa-id-badge"></i> Employee ID
+              </label>
+              <input 
+                type="number" 
+                id="status-employee-id" 
+                name="employee_id" 
+                placeholder="Enter employee ID"
+                required
+              >
+            </div>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save"></i> Update Employment Status
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab switching functionality
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const tabName = this.getAttribute('data-tab');
+
+       
+        tabBtns.forEach(b => b.classList.remove('active'));
+        tabPanes.forEach(p => p.classList.remove('active'));
+
+    
+        this.classList.add('active');
+        document.getElementById(tabName).classList.add('active');
+      });
+    });
+
+    // Flash message handling
+    document.querySelectorAll('.alert').forEach(alert => {
+      const closeBtn = alert.querySelector('.alert-close');
+      
+      // Close on button click
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+          alert.classList.add('removing');
+          setTimeout(() => alert.remove(), 300);
+        });
+      }
+      
+     
+      setTimeout(() => {
+        if (alert.parentElement) {
+          alert.classList.add('removing');
+          setTimeout(() => alert.remove(), 300);
+        }
+      }, 5000);
+    });
+
+    // Modal functionality
+    const modal = document.getElementById('confirmation-modal');
+    const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+    const modalCancelBtn = document.getElementById('modal-cancel-btn');
+
+    function showModal(title, message, confirmCallback) {
+      document.getElementById('modal-title').textContent = title;
+      document.getElementById('modal-message').textContent = message;
+      modal.style.display = 'flex';
+      
+      modalConfirmBtn.onclick = function() {
+        confirmCallback();
+        modal.style.display = 'none';
+      };
+    }
+
+    modalCancelBtn.addEventListener('click', () => {
+      modal.style.display = 'none';
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

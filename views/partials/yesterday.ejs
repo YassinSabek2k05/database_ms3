@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/hrtablescroll.css">
+    <title>Document</title>
+</head>
+<body>
+  <table class="table">
+    <thead>
+        <tr>
+            <th>Attendance ID</th>
+            <th>Date</th>
+            <th>Check-in Time</th>
+            <th>Check-out Time</th>
+            <th>Total Duration</th>
+            <th>Status</th>
+            <th>Hours Worked</th>
+            <th>Employee ID</th>
+        </tr>
+    </thead>
+    <tbody>
+      <% if (attendanceData && Array.isArray(attendanceData)) { %>
+        <% attendanceData.forEach(row => { %>
+          <tr>
+            <td><%= row.attendance_ID %></td>
+            <td><%= new Date(row.date).toLocaleDateString('en-US', { timeZone: 'Africa/Cairo' }) %></td>
+            <td><%= row.check_in_time ? new Date(row.check_in_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'Africa/Cairo' }) : '-' %></td>
+            <td><%= row.check_out_time ? new Date(row.check_out_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'Africa/Cairo' }) : '-' %></td>
+            <td><%= row.total_duration %></td>
+            <td><%= row.status %></td>
+            <td><%= row.emp_ID %></td>
+          </tr>
+        <% }) %>
+      <% } else { %>
+        <tr>
+          <td colspan="8" style="text-align: center; padding: 20px;">No attendance records available.</td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</body>
+</html>

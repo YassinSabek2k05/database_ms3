@@ -3,7 +3,47 @@ const { config, sql } = require('../config/db');
 const ADMIN_ID = '44';
 const ADMIN_PASS = 'admin123';
 
-//malak
+//malak admin component part 1
+// ADMIN AUTHENTICATION
+exports.authAdmin = async (userid, password) => {
+    return userid === ADMIN_ID && password === ADMIN_PASS;
+};
+//2
+exports.allEmployeeProfiles = async () => {
+  try {
+    const pool = await sql.connect(config);
+    const result =await pool.request().query(`exec allEmployeeProfiles`);
+    return result.recordset;
+  } catch (error) {
+    console.error("Error in allEmployeeProfiles:", error);
+    throw error;
+}
+};
+
+//3
+exports.NoEmployeeDept = async () => {
+  try {
+    const pool = await sql.connect(config);
+    const result = await pool.request().query(`exec NoEmployeeDept`);
+    return result.recordset;
+  } catch (error) {
+    console.error("Error in NoEmployeeDept:", error);
+    throw error;
+}
+};
+
+//4
+exports.allRejectedMedicals = async () => {
+   try {
+    const pool = await sql.connect(config);
+    const result = await pool.request().query(`exec allRejectedMedicals`);
+    return result.recordset;
+  } catch (error) {
+    console.error("Error in allRejectedMedicals:", error);
+    throw error;
+}
+};
+
 //5
 exports.Remove_Deductions = async () => {
     try {
@@ -17,10 +57,10 @@ exports.Remove_Deductions = async () => {
 
 
 //6
-exports.Update_Attendance = async (employee_ID, date, status) => {
+exports.Update_Attendance = async (employee_ID, check_in_time, check_out_time) => {
     try {
     const pool = await sql.connect(config);
-    await pool.request().query(`exec Update_Attendance ${employee_ID}, ${date}, ${status}`);
+    await pool.request().query(`exec Update_Attendance ${employee_ID}, ${check_in_time}, ${check_out_time}`);
   } catch (error) {
     console.error("Error in Update_Attendance:", error);
     throw error;
@@ -28,7 +68,7 @@ exports.Update_Attendance = async (employee_ID, date, status) => {
 };
 
 
-//7
+//7 
 exports.Add_holiday = async (holiday_name,from_date, to_date) => {
     try {
     const pool = await sql.connect(config);
@@ -49,22 +89,7 @@ exports.Initiate_Attendance = async () => {
     throw error;
 }
 };
-
 //raghad admin component part 2
-
-
-// ADMIN AUTHENTICATION
-exports.authAdmin = async (userid, password) => {
-    return userid === ADMIN_ID && password === ADMIN_PASS;
-};
-
-// exports.getAdminData = async (employee_ID) => {
-//     const pool = await sql.connect(config);
-
-//     const result = await pool.request().query(SELECT * FROM Employee where employee_ID = ${employee_ID});
-//     console.log(result.recordset);
-//     return result.recordset;
-// };
 
 //  1. fetch yesterday attendance
 exports.getYesterdayAttendance = async () => {

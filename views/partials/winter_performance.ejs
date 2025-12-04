@@ -1,0 +1,28 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th>Performance ID</th>
+      <th>Rating</th>
+      <th>Comments</th>
+      <th>Semester</th>
+      <th>Employee ID</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if (performanceData && Array.isArray(performanceData)) { %>
+      <% performanceData.forEach(row => { %>
+        <tr>
+          <td><%= row.performance_ID %></td>
+          <td><%= row.rating %></td>
+          <td><%= row.comments %></td>
+          <td><%= row.semester %></td>
+          <td><%= row.emp_ID %></td>
+        </tr>
+      <% }) %>
+    <% } else { %>
+      <tr>
+        <td colspan="5" style="text-align: center; padding: 20px;">No performance records available.</td>
+      </tr>
+    <% } %>
+  </tbody>
+</table>

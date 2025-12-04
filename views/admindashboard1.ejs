@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/variables.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/navbar.css">
+  <link rel="stylesheet" href="/css/hrdashboard.css">
+  <title>Admin Dashboard</title>
+</head>
+<body>
+  <%- include('./partials/navbar') %>
+  
+  <div class="flash-messages">
+    <% if (success && success.length > 0) { %>
+      <div class="alert alert-success">
+        <i class="fas fa-check-circle"></i>
+        <span><%= success[0] %></span>
+        <button class="alert-close" type="button"><i class="fas fa-times"></i></button>
+      </div>
+    <% } %>
+    <% if (error && error.length > 0) { %>
+      <div class="alert alert-error">
+        <i class="fas fa-exclamation-circle"></i>
+        <span><%= error[0] %></span>
+        <button class="alert-close" type="button"><i class="fas fa-times"></i></button>
+      </div>
+    <% } %>
+  </div>
+
+  <div class="dashboard-container">
+    <div class="dashboard-header">
+      <h1><i class="fas fa-chart-line"></i> Admin Management Dashboard</h1>
+      <p>Welcome, <strong><%= user ? user.name : 'User' %></strong></p>
+    </div>
+
+    <div class="tabs-container">
+      <div class="tabs-nav">
+        <button class="tab-btn active" data-tab="all_employees">
+          <i class="fas fa-users"></i> ALL Employees Profiles
+        </button>
+        <button class="tab-btn" data-tab="EmployeesinDep">
+          <i class="fas fa-building"></i> Employees in Department
+        </button>
+        <button class="tab-btn" data-tab="rejectedMedicals">
+          <i class="fas fa-hand-holding-medical"></i> Rejected Medical Leaves
+        </button>
+        <button class="tab-btn" data-tab="remove-deductions">
+          <i class="fas fa-calendar-times"></i> Deductions of Resigned Employees
+        </button>
+        <button class="tab-btn" data-tab="update_attendance">
+          <i class="fas fa-user-clock"></i> Update Attendance 
+        </button>
+        <button class="tab-btn" data-tab="holiday">
+          <i class="fas fa-calendar-day"></i> Official Holiday
+        </button>
+        <button class="tab-btn" data-tab="Initiate_Attendance">
+          <i class="fas fa-redo-alt"></i> Initiate Attendance
+        </button>
+      </div>
+    </div>
+
+    <div class="tabs-content">
+      <div class="tab-pane active" id="all_employees">
+        <div class="tab-header">
+          <h2><i class="fas fa-users"></i> ALL Employees Profiles</h2>
+        </div>
+        <% if (employees && employees.length > 0) { %>
+        <div class="tab-body">
+            <%- include('./partials/all_employees', { employees: employees }) %>
+        </div>
+        <% } else { %>
+          <div class="tab-body">
+              <p>No employee profiles available.</p>
+          </div>
+        <% } %>
+      </div>
+
+      <div class="tab-pane" id="EmployeesinDep">
+        <div class="tab-header">
+          <h2><i class="fas fa-building"></i> Number of Employees Per Department</h2>
+        </div>
+        <% if (empInDep && empInDep.length > 0) { %>
+        <div class="tab-body">
+            <%- include('./partials/employeePerDep', { empInDep: empInDep }) %>
+        </div>
+        <% } else { %>
+          <div class="tab-body">
+              <p>No department available.</p>
+          </div>
+        <% } %>
+      </div>
+
+      <div class="tab-pane" id="rejectedMedicals">
+        <div class="tab-header">
+          <h2><i class="fas fa-hand-holding-medical"></i> ALL Rejected Medical Leaves</h2>
+        </div>
+        <% if (rejectedMed && rejectedMed.length > 0) { %>
+        <div class="tab-body">
+            <%- include('./partials/rejected_medical', { rejectedMed: rejectedMed }) %>
+        </div>
+        <% } else { %>
+          <div class="tab-body">
+              <p>No rejected medical leaves available.</p>
+          </div>
+        <% } %>
+      </div>
+
+
+      <div class="tab-pane" id="remove-deductions">
+        <div class="tab-header">
+          <h2><i class="fas fa-user-slash"></i> Remove Deductions for Resigned Employees</h2>
+        </div>
+
+        <div class="tab-body">
+          <p>Remove all deductions for *Resigned* employees.</p>
+
+          <form action="/admin/remove-deductions" method="POST">
+              <button type="submit" class="btn btn-danger">
+                  <i class="fas fa-trash-alt"></i> Remove Resigned Employee Deductions
+              </button>
+          </form>
+
+          <% if (success) { %>
+              <div class="alert alert-success mt-3"><%= success %></div>
+          <% } %>
+
+          <% if (error) { %>
+              <div class="alert alert-danger mt-3"><%= error %></div>
+          <% } %>
+        </div>
+      </div>
+
+
+      <div class="tab-pane" id="update_attendance">
+        <div class="tab-header">
+          <h2><i class="fas fa-user-clock"></i> Update Attendance</h2>
+        </div>
+        <div class="tab-body">
+          <form class="attendance-form" method="POST" action="/admin/update_attendance">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="employee_id_attendance">
+                  <i class="fas fa-id-badge"></i> Employee ID
+                </label>
+                <input 
+                  type="number" 
+                  id="employee_id_attendance" 
+                  name="employee_id" 
+                  placeholder="Enter employee ID"
+                  required
+                >
+              </div>
+
+              <div class="time-range-section">
+                <div class="time-range-header">
+                  <i class="fas fa-clock"></i> Attendance Timing
+                </div>
+                <div class="time-inputs-wrapper">
+                  <div class="time-input-group">
+                    <label for="check_in_time_attendance">
+                      <span class="time-label">Check In</span>
+                      <input 
+                        type="time" 
+                        id="check_in_time_attendance" 
+                        name="check_in_time" 
+                        required
+                      >
+                    </label>
+                  </div>
+                  
+                  <div class="time-input-group">
+                    <label for="check_out_time_attendance">
+                      <span class="time-label">Check Out</span>
+                      <input 
+                        type="time" 
+                        id="check_out_time_attendance" 
+                        name="check_out_time" 
+                        required
+                      >
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-edit"></i> Update Attendance
+            </button>
+          </form>
+        </div>
+      </div>
+
+
+      <div class="tab-pane" id="holiday">
+  <div class="tab-header">
+    <h2><i class="fas fa-calendar-day"></i> Add Official Holiday</h2>
+  </div>
+  <div class="tab-body">
+    <form class="holiday-form" method="POST" action="/admin/add_holiday">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="holiday_name_holiday">
+            <i class="fas fa-tag"></i> Holiday Name
+          </label>
+          <input 
+            type="text" 
+            id="holiday_name_holiday" 
+            name="holiday_name" 
+            placeholder="Enter Holiday Name"
+            required
+          >
+        </div>
+        
+
+        <div class="date-range-section">
+          <div class="date-range-header">
+            <i class="fas fa-calendar-alt"></i> Holiday Period
+          </div>
+          <div class="date-inputs-wrapper">
+            <div class="date-input-group">
+              <label for="from_date_holiday">
+                <span class="date-label">From</span>
+                <input 
+                  type="date" 
+                  id="from_date_holiday" 
+                  name="from_date" 
+                  required
+                >
+              </label>
+            </div>
+            
+            <div class="date-input-group">
+              <label for="to_date_holiday">
+                <span class="date-label">To</span>
+                <input 
+                  type="date" 
+                  id="to_date_holiday" 
+                  name="to_date" 
+                  required
+                >
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+
+      <button type="submit" class="btn btn-primary">
+        <i class="fas fa-plus-circle"></i> Add Holiday
+      </button>
+    </form>
+  </div>
+</div>
+
+      <div class="tab-pane" id="Initiate_Attendance">
+        <div class="tab-header">
+            <h2><i class="fas fa-redo-alt"></i> Initiate Attendance </h2>
+        </div>
+
+        <div class="tab-body">
+            <p>Initiate Attendance for all employees *for today*.</p>
+
+            <form action="/admin/Initiate_Attendance" method="POST">
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-redo-alt"></i> Initiate Attendance
+                </button>
+            </form>
+
+            <% if (success) { %>
+                <div class="alert alert-success mt-3"><%= success %></div>
+            <% } %>
+
+            <% if (error) { %>
+                <div class="alert alert-danger mt-3"><%= error %></div>
+            <% } %>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <script>
+    // Tab switching functionality
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const tabName = this.getAttribute('data-tab');
+
+        // Remove active class from all buttons and panes
+        tabBtns.forEach(b => b.classList.remove('active'));
+        tabPanes.forEach(p => p.classList.remove('active'));
+
+        // Add active class to clicked button and corresponding pane
+        this.classList.add('active');
+        document.getElementById(tabName).classList.add('active');
+      });
+    });
+
+    // Flash message handling
+    document.querySelectorAll('.alert').forEach(alert => {
+      const closeBtn = alert.querySelector('.alert-close');
+      
+      // Close on button click
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+          alert.classList.add('removing');
+          setTimeout(() => alert.remove(), 300);
+        });
+      }
+      
+      // Auto-close after 5 seconds
+      setTimeout(() => {
+        if (alert.parentElement) {
+          alert.classList.add('removing');
+          setTimeout(() => alert.remove(), 300);
+        }
+      }, 5000);
+    });
+
+    // --- Date/Time Validation Logic (from HR Dashboard) ---
+
+    // Holiday Date Range Validation
+    const fromDateHoliday = document.getElementById('from_date_holiday');
+    const toDateHoliday = document.getElementById('to_date_holiday');
+    const holidayForm = document.querySelector('.holiday-form');
+
+    if (fromDateHoliday && toDateHoliday) {
+      // Set minimum date for to_date when from_date changes
+      fromDateHoliday.addEventListener('change', () => {
+        toDateHoliday.min = fromDateHoliday.value;
+        
+        // If to_date is earlier than from_date, clear it
+        if (toDateHoliday.value && new Date(toDateHoliday.value) < new Date(fromDateHoliday.value)) {
+          toDateHoliday.value = '';
+        }
+      });
+
+      // Validate on form submit
+      if (holidayForm) {
+        holidayForm.addEventListener('submit', (e) => {
+          if (!fromDateHoliday.value || !toDateHoliday.value) {
+            e.preventDefault();
+            alert('Please select both start and end dates for the holiday period');
+            return false;
+          }
+          
+          if (new Date(toDateHoliday.value) < new Date(fromDateHoliday.value)) {
+            e.preventDefault();
+            alert('End date must be greater than or equal to start date');
+            return false;
+          }
+        });
+      }
+    }
+    
+    // Attendance Time Range Validation
+    const checkInTimeAttendance = document.getElementById('check_in_time_attendance');
+    const checkOutTimeAttendance = document.getElementById('check_out_time_attendance');
+    const attendanceForm = document.querySelector('.attendance-form');
+
+    if (checkInTimeAttendance && checkOutTimeAttendance) {
+      // Validate on form submit
+      if (attendanceForm) {
+        attendanceForm.addEventListener('submit', (e) => {
+          if (checkInTimeAttendance.value && checkOutTimeAttendance.value) {
+            // Simple string comparison for time validation (HH:MM format)
+            if (checkOutTimeAttendance.value <= checkInTimeAttendance.value) {
+              e.preventDefault();
+              alert('Check-out time must be after check-in time');
+              return false;
+            }
+          }
+        });
+      }
+    }
+    
+  </script>
+</body>
+</html>
