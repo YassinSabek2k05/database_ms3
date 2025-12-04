@@ -1,0 +1,38 @@
+<% if (myLeaveStatuses && myLeaveStatuses.length > 0) { %>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Request ID</th>
+                <th>Date of Request</th>
+                <th>Final Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% myLeaveStatuses.forEach(leave => { %>
+                <tr>
+                    <td><%= leave.request_ID %></td>
+                    <td>
+                        <% if (leave.date_of_request) { %>
+                            <% try { %>
+                                <%= new Date(leave.date_of_request).toLocaleDateString() %>
+                            <% } catch(e) { %>
+                                <%= leave.date_of_request %>
+                            <% } %>
+                        <% } else { %>
+                            N/A
+                        <% } %>
+                    </td>
+                    <td>
+                        <span class="status-pill <%= (leave.final_approval_status || leave.Final_status || '').toLowerCase() %>">
+                            <%= leave.final_approval_status || leave.Final_status || 'Unknown' %>
+                        </span>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+<% } else { %>
+    <div class="info-message">
+        <i class="fas fa-info-circle"></i> You have no submitted leave requests or data is unavailable.
+    </div>
+<% } %>

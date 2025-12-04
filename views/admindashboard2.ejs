@@ -13,7 +13,7 @@
   <title>Admin Dashboard</title>
 </head>
 <body>
-  <%- include('./partials/navbar') %>
+  <%- include('./partials/navbar', { navItems: navItems}) %>
   
   <!-- Flash Messages -->
   <div class="flash-messages">
@@ -69,9 +69,6 @@
       <div class="tab-pane active" id="yesterday-attendance">
         <div class="tab-header" style="display: flex; justify-content: space-between; align-items: center;">
           <h2><i class="fas fa-calendar-day"></i> Yesterday's Attendance Records</h2>
-          <form id="fetch-attendance-form" method="GET" action="/admin/dashboard" style="margin: 0;">
-            <input type="hidden" name="action" value="fetch-attendance">
-          </form>
         </div>
         <div class="tab-body">
           <div class="yesterday-section">
@@ -85,12 +82,6 @@
       <div class="tab-pane" id="winter-performance">
         <div class="tab-header" style="display: flex; justify-content: space-between; align-items: center;">
           <h2><i class="fas fa-chart-line"></i> Winter Semester Performance</h2>
-          <form id="fetch-performance-form" method="GET" action="/admin/dashboard" style="margin: 0;">
-            <input type="hidden" name="action" value="fetch-performance">
-            <button class="admin-btn btn-fetch" type="submit">
-              <i class="fas fa-sync"></i> Refresh Performance
-            </button>
-          </form>
         </div>
         <div class="tab-body">
           <div class="performance-section">
@@ -105,22 +96,12 @@
           <h2><i class="fas fa-umbrella-beach"></i> Holiday Attendance Cleanup</h2>
         </div>
         <div class="tab-body">
-          <form class="employee-form" method="POST" action="/admin/remove-holiday">
-            <div class="form-group">
-              <label for="holiday-employee-id">
-                <i class="fas fa-id-badge"></i> Employee ID
-              </label>
-              <input 
-                type="number" 
-                id="holiday-employee-id" 
-                name="employee_id" 
-                placeholder="Enter employee ID"
-                required
-              >
-            </div>
-            <button type="submit" class="btn btn-primary">
-              <i class="fas fa-trash-alt"></i> Remove Holiday Attendance
-            </button>
+          <p>Remove all holiday attendance records.</p>
+
+          <form action="/admin/remove-holiday" method="POST">
+              <button type="submit" class="btn btn-danger">
+                  <i class="fas fa-trash-alt"></i> Remove Holiday Attendance
+              </button>
           </form>
         </div>
       </div>
@@ -157,72 +138,41 @@
           <h2><i class="fas fa-exchange-alt"></i> Replace Employee</h2>
         </div>
         <div class="tab-body">
-          <div class="replace-section">
-            <div class="replace-form-container">
-              <div class="replace-columns">
-                <!-- Replace From -->
-                <div class="replace-from">
-                  <div class="replace-header">
-                    <i class="fas fa-user-minus"></i>
-                    <h4>Replace From</h4>
-                  </div>
-                  <div class="employee-select-wrapper">
-                    <label>Select Employee to Replace</label>
-                    <select id="replace-from-select">
-                      <option value="">-- Select Employee --</option>
-
-                    </select>
-                  </div>
-                  <div class="employee-preview-card" id="from-employee-preview">
-                    <p class="text-center">Select an employee to view details</p>
-                  </div>
-                </div>
-
-                <!-- Arrow -->
-                <div class="replace-arrow">
-                  <i class="fas fa-arrow-right"></i>
-                </div>
-
-                <div class="replace-to">
-                  <div class="replace-header">
-                    <i class="fas fa-user-plus"></i>
-                    <h4>Replace With</h4>
-                  </div>
-                  <div class="employee-select-wrapper">
-                    <label>Select Replacement Employee</label>
-                    <select id="replace-to-select">
-                      <option value="">-- Select Employee --</option>
-                    </select>
-                  </div>
-                  <div class="employee-preview-card" id="to-employee-preview">
-                    <p class="text-center">Select an employee to view details</p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Replace Details -->
-              <div class="replace-details mt-30">
-                <h4>Replacement Details</h4>
+          <form action="/admin/replace-employee" method="post" class="employee-form">
+            <div class="form-section">
+              <h4><i class="fas fa-user-exchange"></i> Employee Information</h4>
+              
+              <!-- Employee IDs side by side -->
+              <div class="form-row">
                 <div class="admin-form-group">
-                  <label><i class="fas fa-calendar-alt"></i> Effective Date</label>
-                  <input type="date" id="effective-date" required>
+                  <label for="old-employee-id"><i class="fas fa-user-minus"></i> Employee to Replace</label>
+                  <input name="Emp1_ID" type="number" id="old-employee-id" required 
+                    placeholder="Enter employee ID to replace">
                 </div>
                 <div class="admin-form-group">
-                  <label><i class="fas fa-sticky-note"></i> Reason for Replacement</label>
-                  <textarea id="replacement-reason" rows="3" 
-                            placeholder="Enter reason for employee replacement..."></textarea>
+                  <label for="new-employee-id"><i class="fas fa-user-plus"></i> Replacement Employee</label>
+                  <input name="Emp2_ID" type="number" id="new-employee-id" required 
+                    placeholder="Enter replacement employee ID">
                 </div>
               </div>
-
+              <div class="form-row">
+                <div class="admin-form-group">
+                  <label for="start-date"><i class="fas fa-calendar-check"></i> From Date</label>
+                  <input type="date" id="start-date" name="start_date" required>
+                </div>
+                <div class="admin-form-group">
+                  <label for="end-date"><i class="fas fa-calendar-times"></i> To Date</label>
+                  <input type="date" id="end-date" name="end_date" required>
+                </div>
               </div>
+            </div>
 
-              <form id="confirm-replace-form" method="POST" action="/admin/replace-employee">
-                <input type="hidden" name="action" value="replace-employee">
-                <button class="admin-btn btn-replace mt-20" type="submit">
-                  <i class="fas fa-user-friends"></i> Confirm Employee Replacement
-                </button>
-              </form>
-          </div>
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">
+                <i class="fas fa-check"></i> Replace Employee
+              </button>
+            </div>
+          </form>
         </div>
       </div>
 
@@ -240,7 +190,7 @@
               <input 
                 type="number" 
                 id="status-employee-id" 
-                name="employee_id" 
+                name="Employee_ID" 
                 placeholder="Enter employee ID"
                 required
               >
@@ -321,5 +271,6 @@
       }
     });
   </script>
+  <%- include('./partials/footer') %>
 </body>
 </html>

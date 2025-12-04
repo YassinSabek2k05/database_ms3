@@ -1,0 +1,77 @@
+<h4><i class="fas fa-wallet"></i> Pending Unpaid Leave Requests</h4>
+<% if (pendingUnpaidLeaves && pendingUnpaidLeaves.length > 0) { %>
+    <table class="data-table approval-table">
+        <thead>
+            <tr>
+                <th>Req ID</th>
+                <th>Employee</th>
+                <th>Dates</th>
+                <th>Reason</th>
+                <th>HR Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% pendingUnpaidLeaves.forEach(leave => { %>
+                <tr>
+                    <td><%= leave.request_ID %></td>
+                    <td><%= leave.first_name %> <%= leave.last_name %> (<%= leave.employee_id %>)</td>
+                    <td><%= new Date(leave.start_date).toLocaleDateString() %> to <%= new Date(leave.end_date).toLocaleDateString() %></td>
+                    <td><%= leave.document_description || '-' %></td>
+                    <td><%= leave.HR_approval_status || 'Pending' %></td>
+                    <td>
+                        <form method="POST" action="/academic/approveUnpaid" style="display:inline-block;">
+                            <input type="hidden" name="request_id" value="<%= leave.request_ID %>">
+                            <button type="submit" class="btn btn-small btn-success">Process</button>
+                        </form>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+<% } else { %>
+    <div class="success-message"><i class="fas fa-check"></i> No pending Unpaid Leave requests.</div>
+<% } %>
+
+<hr style="margin: 30px 0;">
+
+<h4><i class="fas fa-calendar-check"></i> Pending Annual Leave Requests</h4>
+<% if (pendingAnnualLeaves && pendingAnnualLeaves.length > 0) { %>
+    <table class="data-table approval-table">
+        <thead>
+            <tr>
+                <th>Req ID</th>
+                <th>Employee</th>
+                <th>Dates</th>
+                <th>HR Status</th>
+                <th>Replacement ID</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% pendingAnnualLeaves.forEach(leave => { %>
+                <tr>
+                    <td><%= leave.request_ID %></td>
+                    <td><%= leave.first_name %> <%= leave.last_name %> (<%= leave.employee_id %>)</td>
+                    <td><%= new Date(leave.start_date).toLocaleDateString() %> to <%= new Date(leave.end_date).toLocaleDateString() %></td>
+                    <td><%= leave.HR_approval_status || 'Pending' %></td>
+                    <td>
+                        <form method="POST" action="/academic/approveAnnual" style="display:inline-block;">
+                            <input type="hidden" name="request_id" value="<%= leave.request_ID %>">
+                            <input type="number" name="replacement_ID" placeholder="Replacement Employee ID" required style="width:140px;">
+                            <button type="submit" class="btn btn-small btn-success">Approve</button>
+                        </form>
+
+                        <form method="POST" action="/academic/approveAnnual" style="display:inline-block;">
+                            <input type="hidden" name="request_id" value="<%= leave.request_ID %>">
+                            <input type="hidden" name="replacement_ID" value="<%= leave.replacement_emp || '' %>">
+                            <button type="submit" class="btn btn-small btn-danger">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+<% } else { %>
+    <div class="success-message"><i class="fas fa-check"></i> No pending Annual Leave requests.</div>
+<% } %>

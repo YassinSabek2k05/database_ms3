@@ -64,7 +64,7 @@ exports.HR_approval_comp = async (req, res) => {
             req.flash('error', 'Invalid request ID or HR ID');
             return res.redirect('/hr/hrdashboard');
         }
-        
+        console.log(request_ID, HR_ID);
         const result = await hrService.HR_approval_comp(request_ID, HR_ID);
         req.flash('success', 'Compensatory leave request processed successfully');
         res.redirect('/hr/hrdashboard');

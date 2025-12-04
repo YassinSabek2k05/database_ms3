@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    <link rel="stylesheet" href="/css/academicdashboard.css"> 
+    <title>Academic Staff Dashboard</title>
+</head>
+<body>
+    <%- include('./partials/navbar') %>
+    
+    <div class="flash-messages">
+        <% if (success && success.length > 0) { %>
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                <span><%= success[0] %></span>
+                <button class="alert-close" type="button"><i class="fas fa-times"></i></button>
+            </div>
+        <% } %>
+        <% if (error && error.length > 0) { %>
+            <div class="alert alert-error">
+                <i class="fas fa-exclamation-circle"></i>
+                <span><%= error[0] %></span>
+                <% if (correction && correction.length > 0) { %>
+                    <p class="correction-step"><strong>Correction:</strong> <%= correction[0] %></p>
+                <% } %>
+                <button class="alert-close" type="button"><i class="fas fa-times"></i></button>
+            </div>
+        <% } %>
+    </div>
+
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1><i class="fas fa-user-tie"></i> Academic Staff Dashboard</h1>
+            <p>Welcome, <strong><%= user ? user.first_name + ' ' + user.last_name : 'Academic Employee' %></strong> (<%= user.role %>)</p>
+        </div>
+
+        <div class="tabs-container">
+            <div class="tabs-nav">
+                <button class="tab-btn active" data-tab="applications">
+                    <i class="fas fa-paper-plane"></i> Apply for Leave (Part 2)
+                </button>
+                
+                <button class="tab-btn" data-tab="status">
+                    <i class="fas fa-list-alt"></i> My Leave Status
+                </button>
+
+                <% if (canApproveLeaves) { %>
+                    <button class="tab-btn" data-tab="approvals">
+                        <i class="fas fa-signature"></i> Upper Board Approvals
+                    </button>
+                <% } %>
+                
+                <% if (canEvaluate) { %>
+                    <button class="tab-btn" data-tab="evaluation">
+                        <i class="fas fa-star-half-alt"></i> Employee Evaluation
+                    </button>
+                <% } %>
+                
+                <button class="tab-btn" data-tab="personal-records">
+                    <i class="fas fa-user-circle"></i> My Records (Part 1)
+                </button>
+            </div>
+        </div>
+
+        <div class="tabs-content">
+            <div class="tab-pane active" id="applications">
+                <div class="tab-header">
+                    <h2>Apply for Specialized Leave</h2>
+                </div>
+                
+                <div class="inner-tabs-nav">
+                    <button class="inner-tab-btn active" data-inner-tab="accidental">Accidental</button>
+                    <button class="inner-tab-btn" data-inner-tab="medical">Medical</button>
+                    <button class="inner-tab-btn" data-inner-tab="unpaid">Unpaid</button>
+                    <button class="inner-tab-btn" data-inner-tab="compensation">Compensation</button>
+                </div>
+                
+                <div class="inner-tabs-content">
+                    <div class="inner-tab-pane active" id="accidental">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Accidental Leave</h3>
+                        <form class="leave-form" method="POST" action="/academic/submitAccidental">
+                            <div class="form-group"><label>Start Date:</label><input type="date" name="start_date" required></div>
+                            <div class="form-group"><label>End Date:</label><input type="date" name="end_date" required></div>
+                            <button type="submit" class="btn btn-primary">Submit Accidental Leave</button>
+                        </form>
+                    </div>
+
+                    <div class="inner-tab-pane" id="medical">
+                        <h3><i class="fas fa-hand-holding-medical"></i> Medical Leave</h3>
+                        <form class="leave-form" method="POST" action="/academic/submitMedical">
+                            <div class="form-group"><label>Start Date:</label><input type="date" name="start_date" required></div>
+                            <div class="form-group"><label>End Date:</label><input type="date" name="end_date" required></div>
+                            <div class="form-group"><label>Leave Type:</label><input type="text" name="type" placeholder="e.g., Hospitalization, Sick Leave" required></div>
+                            <div class="form-group">
+                                <label>Insurance Status:</label>
+                                <select name="insurance_status" required><option value="1">Insured</option><option value="0">Not Insured</option></select>
+                            </div>
+                            <div class="form-group"><label>Disability Details:</label><textarea name="disability_details" rows="3" placeholder="If applicable"></textarea></div>
+                            <button type="submit" class="btn btn-primary">Submit Medical Leave</button>
+                        </form>
+                    </div>
+
+                    <div class="inner-tab-pane" id="unpaid">
+                        <h3><i class="fas fa-wallet"></i> Unpaid Leave</h3>
+                        <form class="leave-form" method="POST" action="/academic/submitUnpaid">
+                            <div class="form-group"><label>Start Date:</label><input type="date" name="start_date" required></div>
+                            <div class="form-group"><label>End Date:</label><input type="date" name="end_date" required></div>
+                            <div class="form-group"><label>Reason:</label><textarea name="document_description" rows="3" required></textarea></div>
+                            <button type="submit" class="btn btn-primary">Submit Unpaid Leave</button>
+                        </form>
+                    </div>
+                    
+                    <div class="inner-tab-pane" id="compensation">
+                        <h3><i class="fas fa-redo-alt"></i> Compensation Leave</h3>
+                        <form class="leave-form" method="POST" action="/academic/submitCompensation">
+                            <div class="form-group"><label>Compensation Date (Leave Date):</label><input type="date" name="compensation_date" required></div>
+                            <div class="form-group"><label>Original Workday Date:</label><input type="date" name="date_of_original_workday_date" required></div>
+                            <div class="form-group"><label>Replacement Employee ID:</label><input type="number" name="replacement_emp" placeholder="ID of replacement staff" required></div>
+                            <div class="form-group"><label>Reason:</label><textarea name="reason" rows="3" required></textarea></div>
+                            <button type="submit" class="btn btn-primary">Submit Compensation Leave</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane" id="status">
+                <div class="tab-header">
+                    <h2><i class="fas fa-history"></i> My Submitted Leave Status</h2>
+                </div>
+                <div class="tab-body">
+                    <%- include('./partials/academic_leave_status') %>
+                </div>
+            </div>
+
+            <% if (canApproveLeaves) { %>
+                <div class="tab-pane" id="approvals">
+                    <div class="tab-header">
+                        <h2><i class="fas fa-check-double"></i> Pending Annual & Unpaid Leaves</h2>
+                        <p class="role-note">Actions for Dean, Vice-Dean, or President.</p>
+                    </div>
+                    <div class="tab-body">
+                        <%- include('./partials/upperboard_approvals') %>
+                    </div>
+                </div>
+            <% } %>
+
+            <% if (canEvaluate) { %>
+                <div class="tab-pane" id="evaluation">
+                    <div class="tab-header">
+                        <h2><i class="fas fa-graduation-cap"></i> Evaluate Academic Staff</h2>
+                        <p class="role-note">Actions for Dean only (must evaluate within own department).</p>
+                    </div>
+                    <div class="tab-body">
+                        <%- include('./partials/dean_evaluation') %>
+                    </div>
+                </div>
+            <% } %>
+
+            <div class="tab-pane" id="personal-records">
+                <div class="tab-header">
+                    <h2><i class="fas fa-user-circle"></i> My Personal Records (Part 1)</h2>
+                </div>
+                <div class="tab-body">
+                    <p>Content for Part 1 items like retrieving performance, payroll details, attendance, and deductions will go here.</p>
+                    <% if (typeof myPerformance !== 'undefined' && myPerformance && myPerformance.length > 0) { %>
+                        <h3>Performance</h3>
+                        <ul>
+                            <% myPerformance.forEach(perf => { %>
+                                <li>Semester <%= perf.semester %>: Rating <%= perf.rating %>/5 - <%= perf.comments %></li>
+                            <% }); %>
+                        </ul>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Main Tab switching functionality
+        const tabBtns = document.querySelectorAll('.tabs-nav .tab-btn');
+        const tabPanes = document.querySelectorAll('.tabs-content .tab-pane');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabName = this.getAttribute('data-tab');
+
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabPanes.forEach(p => p.classList.remove('active'));
+
+                this.classList.add('active');
+                document.getElementById(tabName).classList.add('active');
+            });
+        });
+
+        // Inner Tab switching functionality for Leave Applications
+        const innerTabBtns = document.querySelectorAll('.inner-tabs-nav .inner-tab-btn');
+        const innerTabPanes = document.querySelectorAll('.inner-tabs-content .inner-tab-pane');
+
+        innerTabBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabName = this.getAttribute('data-inner-tab');
+
+                innerTabBtns.forEach(b => b.classList.remove('active'));
+                innerTabPanes.forEach(p => p.classList.remove('active'));
+
+                this.classList.add('active');
+                document.getElementById(tabName).classList.add('active');
+            });
+        });
+
+        // Flash message handling (auto-close/manual close)
+        document.querySelectorAll('.alert').forEach(alert => {
+            const closeBtn = alert.querySelector('.alert-close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    alert.classList.add('removing');
+                    setTimeout(() => alert.remove(), 300);
+                });
+            }
+            setTimeout(() => {
+                if (alert.parentElement) {
+                    alert.classList.add('removing');
+                    setTimeout(() => alert.remove(), 300);
+                }
+            }, 5000);
+        });
+    </script>
+    <%- include('./partials/footer') %>
+</body>
+</html>

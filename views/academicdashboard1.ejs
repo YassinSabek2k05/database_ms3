@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/variables.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/navbar.css">
+  <link rel="stylesheet" href="/css/hrdashboard.css">
+  <title>Academic Dashboard</title>
+</head>
+<body>
+  <%- include('./partials/navbar', { navItems: navItems }) %>
+  
+  <!-- Flash Messages -->
+  <div class="flash-messages">
+    <% if (success && success.length > 0) { %>
+      <div class="alert alert-success">
+        <i class="fas fa-check-circle"></i>
+        <span><%= success[0] %></span>
+        <button class="alert-close" type="button"><i class="fas fa-times"></i></button>
+      </div>
+    <% } %>
+    <% if (error && error.length > 0) { %>
+      <div class="alert alert-error">
+        <i class="fas fa-exclamation-circle"></i>
+        <span><%= error[0] %></span>
+        <button class="alert-close" type="button"><i class="fas fa-times"></i></button>
+      </div>
+    <% } %>
+  </div>
+
+  <div class="dashboard-container">
+    <div class="dashboard-header">
+      <h1><i class="fas fa-graduation-cap"></i> Academic Employee Dashboard</h1>
+      <p>Welcome, <strong><%= user ? user.name : 'User' %></strong></p>
+    </div>
+
+    <!-- Tab Navigation - 6 Functionalities -->
+    <div class="tabs-container">
+      <div class="tabs-nav">
+        <button class="tab-btn active" data-tab="performance">
+          <i class="fas fa-chart-bar"></i> Performance
+        </button>
+        <button class="tab-btn" data-tab="attendance">
+          <i class="fas fa-calendar-day"></i> Attendance
+        </button>
+        <button class="tab-btn" data-tab="payroll">
+          <i class="fas fa-money-bill"></i> Payroll
+        </button>
+        <button class="tab-btn" data-tab="deductions">
+          <i class="fas fa-calculator"></i> Deductions
+        </button>
+        <button class="tab-btn" data-tab="annual-leave">
+          <i class="fas fa-calendar-check"></i> Annual Leave
+        </button>
+        <button class="tab-btn" data-tab="leave-status">
+          <i class="fas fa-list-check"></i> Leave Status
+        </button>
+      </div>
+    </div>
+
+    <!-- Page Content -->
+    <div class="tabs-content">
+
+      <!-- TAB 1: Performance -->
+      <div class="tab-pane active" id="performance">
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-chart-bar"></i> Performance by Semester</h3>
+          </div>
+          <div class="card-body">
+            <form method="POST" action="/academic/get-performance">
+              <div class="form-inline">
+                <div class="form-group">
+                  <label for="semester">Select Semester</label>
+                  <select id="semester" name="semester" required>
+                    <option value="">-- Select --</option>
+                    <option value="W25">W25</option>
+                    <option value="S25">S25</option>
+                    <option value="F24">F24</option>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">
+                  <i class="fas fa-search"></i> View
+                </button>
+              </div>
+            </form>
+            <% if (myPerformance && myPerformance.length > 0) { %>
+              <div class="results-table mt-3">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Semester</th>
+                      <th>Rating</th>
+                      <th>Score</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% myPerformance.forEach(record => { %>
+                      <tr>
+                        <td><%= record.semester || 'N/A' %></td>
+                        <td><%= record.rating || 'N/A' %></td>
+                        <td><%= record.score || 'N/A' %>%</td>
+                      </tr>
+                    <% }); %>
+                  </tbody>
+                </table>
+              </div>
+            <% } else { %>
+              <p class="text-muted mt-3">Select a semester to view performance</p>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: Attendance -->
+      <div class="tab-pane" id="attendance">
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-calendar-day"></i> Current Month Attendance</h3>
+          </div>
+          <div class="card-body">
+            <p class="text-muted small">Excluding official day off</p>
+            <% if (myAttendance && myAttendance.length > 0) { %>
+              <div class="results-table">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Check-In</th>
+                      <th>Check-Out</th>
+                      <th>Hours Worked</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% myAttendance.forEach(record => { %>
+                      <tr>
+                        <td><%= new Date(record.date).toLocaleDateString('en-EG') %></td>
+                        <td><%= record.check_in_time || '--:--' %></td>
+                        <td><%= record.check_out_time || '--:--' %></td>
+                        <td><%= record.hours_worked || '0' %></td>
+                      </tr>
+                    <% }); %>
+                  </tbody>
+                </table>
+              </div>
+            <% } else { %>
+              <p class="text-muted">No records for current month</p>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: Payroll -->
+      <div class="tab-pane" id="payroll">
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-money-bill"></i> Last Month Payroll</h3>
+          </div>
+          <div class="card-body">
+            <% if (lastMonthPayroll && lastMonthPayroll.length > 0) { %>
+              <% lastMonthPayroll.forEach(payroll => { %>
+                <div class="payroll-summary">
+                  <div class="payroll-row"><span class="label">Payment Date:</span><span class="value"><%= new Date(payroll.payment_date).toLocaleDateString('en-EG') %></span></div>
+                  <div class="payroll-row"><span class="label">Period:</span><span class="value"><%= new Date(payroll.from_date).toLocaleDateString('en-EG') %> - <%= new Date(payroll.to_date).toLocaleDateString('en-EG') %></span></div>
+                  <div class="payroll-row"><span class="label">Final Salary:</span><span class="value">EGP <%= (payroll.final_salary_amount || 0).toFixed(2) %></span></div>
+                  <div class="payroll-row"><span class="label">Bonus:</span><span class="value text-success">+ EGP <%= (payroll.bonus_amount || 0).toFixed(2) %></span></div>
+                  <div class="payroll-row"><span class="label">Deductions:</span><span class="value text-danger">- EGP <%= (payroll.deductions_amount || 0).toFixed(2) %></span></div>
+                  <hr>
+                  <div class="payroll-row font-weight-bold"><span class="label">Net Amount:</span><span class="value">EGP <%= ((payroll.final_salary_amount || 0) + (payroll.bonus_amount || 0) - (payroll.deductions_amount || 0)).toFixed(2) %></span></div>
+                  <% if (payroll.comments && payroll.comments !== 'None') { %>
+                    <div class="payroll-row mt-2"><span class="label">Comments:</span><span class="value text-muted"><%= payroll.comments %></span></div>
+                  <% } %>
+                </div>
+              <% }); %>
+            <% } else { %>
+              <p class="text-muted">No payroll data available</p>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: Deductions -->
+      <div class="tab-pane" id="deductions">
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-calculator"></i> Attendance Deductions</h3>
+          </div>
+          <div class="card-body">
+            <form method="POST" action="/academic/get-deductions">
+              <div class="form-inline">
+                <div class="form-group">
+                  <label for="month">Month:</label>
+                  <input type="number" id="month" name="month" min="1" max="12" class="form-control form-control-sm" placeholder="1-12">
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">
+                  <i class="fas fa-search"></i> Search
+                </button>
+              </div>
+            </form>
+            <% if (myDeductions && myDeductions.length > 0) { %>
+              <div class="results-table mt-3">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Reason</th>
+                      <th>Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% myDeductions.forEach(deduction => { %>
+                      <tr>
+                        <td><%= new Date(deduction.date).toLocaleDateString('en-EG') %></td>
+                        <td><%= deduction.reason || 'N/A' %></td>
+                        <td class="text-danger">$<%= (deduction.amount || 0).toFixed(2) %></td>
+                      </tr>
+                    <% }); %>
+                  </tbody>
+                </table>
+              </div>
+            <% } else { %>
+              <p class="text-muted mt-3">No deductions found</p>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: Apply Annual Leave -->
+      <div class="tab-pane" id="annual-leave">
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-calendar-check"></i> Apply for Annual Leave</h3>
+          </div>
+          <div class="card-body">
+            <form action="/academic/submit-annual" method="POST">
+              <div class="form-group">
+                <label for="replacement_emp">Replacement Employee ID</label>
+                <input type="number" id="replacement_emp" name="replacement_emp" class="form-control" required placeholder="Employee ID">
+              </div>
+              <div class="form-group">
+                <label for="start-date">Start Date</label>
+                <input type="date" id="start-date" name="start_date" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label for="end-date">End Date</label>
+                <input type="date" id="end-date" name="end_date" class="form-control" required>
+              </div>
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-paper-plane"></i> Submit Request
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 6: Leave Status -->
+      <div class="tab-pane" id="leave-status">
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fas fa-list-check"></i> Leave Request Status</h3>
+          </div>
+          <div class="card-body">
+            <p class="text-muted small">Current month - Annual & Accidental leaves</p>
+            <% if (myLeaveStatuses && myLeaveStatuses.length > 0) { %>
+              <div class="results-table mt-3">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Type</th>
+                      <th>Date</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% myLeaveStatuses.forEach(leave => { %>
+                      <tr>
+                        <td>#<%= leave.request_id %></td>
+                        <td><%= leave.leave_type || 'N/A' %></td>
+                        <td><%= new Date(leave.date_of_request).toLocaleDateString('en-EG') %></td>
+                        <td>
+                          <% if (leave.status === 'Approved') { %>
+                            <span class="badge badge-success"><i class="fas fa-check-circle"></i> Approved</span>
+                          <% } else if (leave.status === 'Rejected') { %>
+                            <span class="badge badge-danger"><i class="fas fa-times-circle"></i> Rejected</span>
+                          <% } else { %>
+                            <span class="badge badge-warning"><i class="fas fa-clock"></i> Pending</span>
+                          <% } %>
+                        </td>
+                      </tr>
+                    <% }); %>
+                  </tbody>
+                </table>
+              </div>
+            <% } else { %>
+              <p class="text-muted mt-3">No requests submitted this month</p>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <style>
+    .dashboard-container {
+      max-width: 1400px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+
+    .dashboard-header {
+      margin-bottom: 30px;
+      border-bottom: 2px solid var(--color-secondary);
+      padding-bottom: 15px;
+    }
+
+    .dashboard-header h1 {
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 5px;
+    }
+
+    .dashboard-header p {
+      color: #718096;
+      margin: 0;
+    }
+
+    .tabs-container {
+      margin-bottom: 30px;
+    }
+
+    .tabs-nav {
+      display: flex;
+      gap: 10px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    .tab-btn {
+      padding: 12px 20px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #718096;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--color-primary);
+    }
+
+    .tab-btn.active {
+      color: white;
+      background: linear-gradient(135deg, var(--color-start) 0%, var(--color-end) 100%);
+      border-bottom-color: var(--color-secondary);
+      border-radius: 6px 6px 0 0;
+      padding: 12px 20px;
+    }
+
+    .tabs-content {
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0.8; }
+      to { opacity: 1; }
+    }
+
+    .tab-pane {
+      display: none;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      max-width: 900px;
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, var(--color-start) 0%, var(--color-end) 100%);
+      color: white;
+      padding: 15px 20px;
+      border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header h3 {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1rem;
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: var(--color-primary);
+      font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 2px solid #e2e8f0;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--color-secondary);
+      box-shadow: 0 0 0 3px rgba(12, 44, 71, 0.1);
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--color-start) 0%, var(--color-end) 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(12, 44, 71, 0.2);
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 0.9rem;
+    }
+
+    .btn-block {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .results-table {
+      overflow-x: auto;
+      margin-top: 15px;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      margin-bottom: 0;
+    }
+
+    .table th {
+      background: #f8f9fa;
+      color: var(--color-primary);
+      padding: 10px;
+      text-align: left;
+      font-weight: 600;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    .table td {
+      padding: 10px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .table-hover tbody tr:hover {
+      background: #f8f9fa;
+    }
+
+    .table-sm th,
+    .table-sm td {
+      padding: 8px;
+      font-size: 0.85rem;
+    }
+
+    .payroll-summary {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 6px;
+    }
+
+    .payroll-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      color: var(--color-primary);
+    }
+
+    .payroll-row .label {
+      font-weight: 600;
+    }
+
+    .payroll-row .value {
+      font-weight: 500;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .badge-success {
+      background: #c6f6d5;
+      color: #22543d;
+    }
+
+    .badge-danger {
+      background: #fed7da;
+      color: #721c24;
+    }
+
+    .badge-warning {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .text-muted {
+      color: #718096;
+    }
+
+    .text-danger {
+      color: #e53e3e;
+    }
+
+    .mt-3 {
+      margin-top: 15px;
+    }
+
+    .mt-4 {
+      margin-top: 20px;
+    }
+
+    .mr-2 {
+      margin-right: 10px;
+    }
+
+    .form-inline {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    .form-inline .form-group {
+      margin-bottom: 0;
+      flex: 1;
+    }
+
+    .form-inline .form-group label {
+      margin-bottom: 4px;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-container {
+        padding: 10px;
+      }
+
+      .tabs-nav {
+        flex-wrap: wrap;
+      }
+
+      .tab-btn {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+      }
+
+      .form-inline {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .form-inline .form-group {
+        width: 100%;
+      }
+    }
+  </style>
+
+  <script>
+    // Tab switching - simple tab navigation only
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const tabName = this.getAttribute('data-tab');
+        
+        // Remove active class from all buttons and panes
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+        
+        // Add active class to clicked button and corresponding pane
+        this.classList.add('active');
+        document.getElementById(tabName).classList.add('active');
+      });
+    });
+
+    // Flash message auto-close
+    document.querySelectorAll('.alert').forEach(alert => {
+      const closeBtn = alert.querySelector('.alert-close');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+          alert.style.display = 'none';
+        });
+      }
+      
+      setTimeout(() => {
+        if (alert.style.display !== 'none') {
+          alert.style.display = 'none';
+        }
+      }, 5000);
+    });
+  </script>
+
+  <%- include('./partials/footer') %>
+</body>
+</html>

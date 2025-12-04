@@ -11,7 +11,7 @@
   <title>Admin Dashboard</title>
 </head>
 <body>
-  <%- include('./partials/navbar') %>
+  <%- include('./partials/navbar', { navItems: navItems, user: { name: "Admin User" } }) %>
   
   <div class="flash-messages">
     <% if (success && success.length > 0) { %>
@@ -39,25 +39,25 @@
     <div class="tabs-container">
       <div class="tabs-nav">
         <button class="tab-btn active" data-tab="all_employees">
-          <i class="fas fa-users"></i> ALL Employees Profiles
+          ALL Employees Profiles
         </button>
         <button class="tab-btn" data-tab="EmployeesinDep">
-          <i class="fas fa-building"></i> Employees in Department
+         Employees in Department
         </button>
         <button class="tab-btn" data-tab="rejectedMedicals">
-          <i class="fas fa-hand-holding-medical"></i> Rejected Medical Leaves
+          Rejected Medical Leaves
         </button>
         <button class="tab-btn" data-tab="remove-deductions">
-          <i class="fas fa-calendar-times"></i> Deductions of Resigned Employees
+         Deductions of Resigned Employees
         </button>
         <button class="tab-btn" data-tab="update_attendance">
-          <i class="fas fa-user-clock"></i> Update Attendance 
+          Update Attendance 
         </button>
         <button class="tab-btn" data-tab="holiday">
-          <i class="fas fa-calendar-day"></i> Official Holiday
+          Official Holiday
         </button>
         <button class="tab-btn" data-tab="Initiate_Attendance">
-          <i class="fas fa-redo-alt"></i> Initiate Attendance
+          Initiate Attendance
         </button>
       </div>
     </div>
@@ -358,28 +358,9 @@
         });
       }
     }
-    
-    // Attendance Time Range Validation
-    const checkInTimeAttendance = document.getElementById('check_in_time_attendance');
-    const checkOutTimeAttendance = document.getElementById('check_out_time_attendance');
-    const attendanceForm = document.querySelector('.attendance-form');
 
-    if (checkInTimeAttendance && checkOutTimeAttendance) {
-      // Validate on form submit
-      if (attendanceForm) {
-        attendanceForm.addEventListener('submit', (e) => {
-          if (checkInTimeAttendance.value && checkOutTimeAttendance.value) {
-            // Simple string comparison for time validation (HH:MM format)
-            if (checkOutTimeAttendance.value <= checkInTimeAttendance.value) {
-              e.preventDefault();
-              alert('Check-out time must be after check-in time');
-              return false;
-            }
-          }
-        });
-      }
-    }
     
   </script>
+  <%- include('./partials/footer') %>
 </body>
 </html>

@@ -1,0 +1,368 @@
+/* --- Global Dashboard Layout --- */
+body {
+    background-color: #f4f7f9;
+    font-family: Arial, sans-serif;
+}
+
+.dashboard-container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+h2.dashboard-title {
+    color: #004d99; /* Dark Blue - University color */
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* --- Navigation Tabs --- */
+.dashboard-tabs-nav {
+    display: flex;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 20px;
+    gap: 5px;
+}
+
+.tab-btn {
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    border-radius: 5px 5px 0 0;
+    transition: background-color 0.3s, color 0.3s;
+    color: #333;
+    font-weight: 600;
+}
+
+.tab-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.tab-btn.active {
+    background-color: #004d99;
+    color: white;
+    border-color: #004d99;
+    border-bottom: 1px solid white; /* Hide border at the bottom */
+}
+
+/* --- Tab Content Styling --- */
+.tab-content {
+    padding: 20px 0;
+}
+
+.tab-pane {
+    display: none;
+    padding: 10px;
+    animation: fadeIn 0.5s;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* --- General Form and Data Card Styling --- */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.form-group input[type="date"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box; /* Ensures padding doesn't affect total width */
+}
+
+.btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+/* --- Record View Specific Styles (academic_records_view.ejs) --- */
+.record-section {
+    margin-bottom: 25px;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.collapsible-header {
+    background-color: #f7f7f7;
+    padding: 15px;
+    cursor: pointer;
+    margin: 0;
+    font-size: 1.1em;
+    color: #004d99;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.collapsible-content {
+    display: none;
+    padding: 20px;
+    background-color: #fff;
+    border-top: none;
+}
+
+.collapsible-content.active {
+    display: block;
+}
+
+.data-card {
+    background-color: #e9f7ff;
+    border-left: 5px solid #007bff;
+    padding: 15px;
+    border-radius: 4px;
+    margin-top: 15px;
+}
+
+/* --- Payroll Grid --- */
+.payroll-card h4 {
+    margin-top: 0;
+    color: #004d99;
+}
+.payroll-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 20px;
+    padding: 10px 0;
+    border-top: 1px dashed #c0e0ff;
+    border-bottom: 1px dashed #c0e0ff;
+}
+
+.payroll-grid div {
+    display: flex;
+    justify-content: space-between;
+}
+
+.net-salary {
+    grid-column: 1 / span 2;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #28a745;
+    padding-top: 10px;
+}
+
+/* --- Leave Forms Specific Styles (academic_leave_forms.ejs) --- */
+.form-tabs-nav {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ccc;
+}
+
+.form-tab-btn {
+    flex-grow: 1;
+    padding: 10px;
+    text-align: center;
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    cursor: pointer;
+    border-radius: 5px 5px 0 0;
+    font-weight: 500;
+}
+
+.form-tab-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.form-tab-btn.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+    border-bottom: 1px solid white;
+}
+
+.form-pane {
+    padding: 20px 0;
+}
+
+.form-pane h3 {
+    color: #004d99;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+/* --- Tables and Status Pills --- */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.data-table th, .data-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+.data-table th {
+    background-color: #f2f2f2;
+    color: #333;
+    font-weight: 600;
+}
+
+.status-pill, .grade-pill {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.9em;
+    font-weight: 700;
+    text-align: center;
+    min-width: 80px;
+}
+
+.status-approved, .status-finalized, .grade-a, .grade-b {
+    background-color: #28a74530; /* Light Green */
+    color: #1e7e34;
+}
+
+.status-pending, .grade-c, .grade-d {
+    background-color: #ffc10730; /* Light Yellow */
+    color: #856404;
+}
+
+.status-rejected, .grade-f {
+    background-color: #dc354530; /* Light Red */
+    color: #c82333;
+}
+
+.status-on-leave {
+    background-color: #17a2b830; /* Light Cyan */
+    color: #0f6674;
+}
+
+/* --- Messages --- */
+.info-message, .success-message {
+    padding: 15px;
+    border-radius: 4px;
+    margin-top: 20px;
+    font-weight: 500;
+}
+
+.info-message {
+    background-color: #e9ecef;
+    border: 1px solid #ced4da;
+    color: #495057;
+}
+
+.success-message {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+/* --- Approval Forms (leadership_leave_approvals.ejs) --- */
+.approval-section {
+    margin-bottom: 30px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.approval-section h4 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.approval-table .inline-form {
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.btn-small {
+    padding: 6px 12px;
+    font-size: 0.9em;
+}
+
+/* --- Dean Evaluation Form --- */
+.evaluation-form-container {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid #eee;
+}
+
+.evaluation-form-container .btn-primary {
+    margin-top: 15px;
+    width: 100%;
+}
+
+.form-inline {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #f4f4f4;
+    border-radius: 4px;
+}
+
+.form-inline .form-group {
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.form-inline label i {
+    color: #004d99;
+}
