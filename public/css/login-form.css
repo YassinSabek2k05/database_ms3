@@ -5,43 +5,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 50%, var(--color-primary) 100%);
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
     padding: 20px;
-    position: relative;
-    overflow: hidden;
-}
-
-.login-container::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -50%;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, rgba(20, 33, 61, 0.2) 0%, transparent 70%);
-    animation: float 15s ease-in-out infinite;
-    pointer-events: none;
-}
-
-.login-container::after {
-    content: '';
-    position: absolute;
-    bottom: -50%;
-    left: -50%;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, rgba(0, 29, 60, 0.15) 0%, transparent 70%);
-    animation: float 20s ease-in-out infinite reverse;
-    pointer-events: none;
-}
-
-@keyframes float {
-    0%, 100% {
-        transform: translate(0, 0);
-    }
-    50% {
-        transform: translate(30px, 30px);
-    }
 }
 
 .login-card {
@@ -74,19 +39,13 @@
 
 .login-header-icon {
     font-size: 3rem;
-    background: linear-gradient(135deg, var(--color-primary) 0%, rgba(12, 44, 71, 0.8) 50%, var(--color-primary) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--color-primary);
     margin-bottom: 15px;
 }
 
 .login-header h1 {
     font-size: 2rem;
-    background: linear-gradient(135deg, var(--color-primary) 0%, rgba(12, 44, 71, 0.8) 50%, var(--color-primary) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--color-primary);
     margin: 0 0 10px 0;
     font-weight: 700;
 }
