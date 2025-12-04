@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/hrtablescroll.css">
+    <title>Rejected Medicals</title>
+</head>
+<body>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Insurance Status</th>
+        <th>Disability Details</th>
+        <th>Type</th>
+        <th>Emp_ID</th> 
+      </tr>
+    </thead>
+    <tbody>
+      <% rejectedMed.forEach(row => { %>
+        <tr>
+            <td><%= row.request_ID %></td>
+            <td><%= row.insurance_status %></td>
+            <td><%= row.disability_details %></td>
+            <td><%= row.type %></td>
+            <td><%= row.Emp_ID %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</body>
+</html>
