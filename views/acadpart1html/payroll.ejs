@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Last Month Payroll</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <style>
+        :root {
+            --accent: #0066ff;
+            --accent-dark: #0043a8;
+            --bg: #f7f9fc;
+            --card: #ffffff;
+            --text: #111826;
+            --muted: #6b7280;
+            --danger: #e11d48;
+            --radius: 12px;
+            --shadow: 0 2px 6px rgba(0,0,0,.05);
+            --transition: .25s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.55;
+            min-height: 100vh;
+            padding: clamp(1.2rem, 4vw, 2.5rem);
+        }
+
+        a.back {
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            margin-bottom: 1.2rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition);
+        }
+
+            a.back:hover {
+                color: var(--accent-dark);
+            }
+
+        h1 {
+            margin: 0 0 .25rem;
+            font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+            font-weight: 600;
+        }
+
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .6rem;
+            margin-bottom: 1.5rem;
+        }
+
+            nav a {
+                padding: .45rem .85rem;
+                border-radius: var(--radius);
+                text-decoration: none;
+                color: var(--accent);
+                font-weight: 500;
+                background: transparent;
+                transition: background var(--transition), color var(--transition);
+            }
+
+                nav a:hover,
+                nav a:focus {
+                    background: var(--accent);
+                    color: #fff;
+                    outline: none;
+                }
+
+        button {
+            padding: .55rem 1.15rem;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #fff;
+            background: var(--accent);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+
+            button:hover {
+                background: var(--accent-dark);
+            }
+
+        #loading {
+            margin-top: 1rem;
+            font-weight: 600;
+            color: var(--muted);
+        }
+
+        #errorBox {
+            margin-top: 1rem;
+            color: var(--danger);
+            font-weight: 500;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid #e5e7eb;
+            border-radius: var(--radius);
+            padding: 1.25rem 1.5rem;
+            box-shadow: var(--shadow);
+            margin-top: 1.5rem;
+        }
+
+        .label {
+            font-weight: 600;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: .45rem 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+            .metric-row:last-child {
+                border: none;
+            }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+            background: var(--card);
+            border: 1px solid #e5e7eb;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        th, td {
+            padding: .75rem .9rem;
+            text-align: center;
+            font-size: .95rem;
+        }
+
+        th {
+            background: #f3f4f6;
+            font-weight: 600;
+        }
+
+        tbody tr:nth-child(odd) {
+            background: #fafafa;
+        }
+
+        tbody tr:hover {
+            background: #f0f5ff;
+        }
+
+        @media (max-width:600px) {
+            nav {
+                justify-content: center;
+            }
+
+            table {
+                font-size: .875rem;
+            }
+
+            th, td {
+                padding: .5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a class="back" href="/academic/dashboard.html">← Back to Dashboard</a>
+
+    <h1>Last Month Payroll</h1>
+
+    <nav aria-label="Secondary">
+        <a href="/academic/performance.html">Performance</a>
+        <a href="/academic/attendance.html">Attendance</a>
+        <a href="/academic/payroll.html">Payroll</a>
+        <a href="/academic/deductions.html">Deductions</a>
+        <a href="/academic/apply_leave.html">Apply Leave</a>
+        <a href="/academic/leaves_status.html">Leave Status</a>
+    </nav>
+
+    <button id="loadPayrollBtn">Load Last Month Payroll</button>
+
+    <div id="loading" aria-live="polite"></div>
+    <div id="errorBox" aria-live="assertive"></div>
+
+    <section id="summary" class="card" style="display:none;" aria-labelledby="summary-heading">
+        <h2 id="summary-heading" style="margin:0 0 .75rem;font-size:1.1rem;">Summary</h2>
+        <div class="metric-row">
+            <span class="label">Gross Salary</span>
+            <span id="gross">—</span>
+        </div>
+        <div class="metric-row">
+            <span class="label">Deductions</span>
+            <span id="deductions">—</span>
+        </div>
+        <div class="metric-row">
+            <span class="label">Net Salary</span>
+            <span id="net">—</span>
+        </div>
+    </section>
+
+    <table id="detailsTable" style="display:none;" aria-label="Payroll breakdown">
+        <thead>
+            <tr>
+                <th scope="col">Description</th>
+                <th scope="col">Amount</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        const loadBtn = document.getElementById('loadPayrollBtn');
+        const loading = document.getElementById('loading');
+        const errorBox = document.getElementById('errorBox');
+        const summary = document.getElementById('summary');
+        const detailsTable = document.getElementById('detailsTable');
+        const tbody = detailsTable.querySelector('tbody');
+
+        loadBtn.addEventListener('click', async () => {
+            loading.textContent = 'Loading…';
+            errorBox.textContent = '';
+            summary.style.display = 'none';
+            detailsTable.style.display = 'none';
+            tbody.innerHTML = '';
+
+            try {
+                const res = await fetch(`/academic/payroll/last-month?employee_id=1`);
+                const data = await res.json();
+
+                loading.textContent = '';
+
+                if (!Array.isArray(data) || data.length === 0) {
+                    errorBox.textContent = 'No payroll data found.';
+                    return;
+                }
+
+                const row = data[0]; // summary row
+
+                document.getElementById('gross').textContent = row.gross_salary ?? '—';
+                document.getElementById('deductions').textContent = row.total_deductions ?? '—';
+                document.getElementById('net').textContent = row.net_salary ?? '—';
+                summary.style.display = 'block';
+
+                if (data.length > 1) {
+                    data.slice(1).forEach(item => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                  <td>${item.description || '—'}</td>
+                  <td>${item.amount || 0}</td>
+                `;
+                        tbody.appendChild(tr);
+                    });
+                    detailsTable.style.display = 'table';
+                }
+
+            } catch (err) {
+                loading.textContent = '';
+                errorBox.textContent = 'Error: ' + err.message;
+            }
+        });
+    </script>
+</body>
+</html>
