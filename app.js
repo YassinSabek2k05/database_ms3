@@ -37,7 +37,7 @@ app.get('/', (req, res) => {
 app.use('/hr', hrRoutes);
 app.use('/auth', authRoutes);
 app.use('/admin', adminRoutes);
-// app. use('/academic', academicRoutes);
+app. use('/academic', academicRoutes);
 
 app.listen(3000, () => {
   console.log('Server is running on http://localhost:3000');
