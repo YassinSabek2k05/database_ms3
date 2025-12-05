@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Attendance</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <style>
+        :root {
+            --accent: #0066ff;
+            --accent-dark: #0043a8;
+            --bg: #f7f9fc;
+            --card: #ffffff;
+            --text: #111826;
+            --muted: #6b7280;
+            --danger: #e11d48;
+            --radius: 12px;
+            --shadow: 0 2px 6px rgba(0,0,0,.05);
+            --transition: .25s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.55;
+            min-height: 100vh;
+            padding: clamp(1.2rem, 4vw, 2.5rem);
+        }
+
+        a.back {
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            margin-bottom: 1.2rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition);
+        }
+
+            a.back:hover {
+                color: var(--accent-dark);
+            }
+
+        h1 {
+            margin: 0 0 .25rem;
+            font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+            font-weight: 600;
+        }
+
+        h3 {
+            margin: 1.2rem 0 .6rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .6rem;
+            margin-bottom: 1.5rem;
+        }
+
+            nav a {
+                padding: .45rem .85rem;
+                border-radius: var(--radius);
+                text-decoration: none;
+                color: var(--accent);
+                font-weight: 500;
+                background: transparent;
+                transition: background var(--transition), color var(--transition);
+            }
+
+                nav a:hover,
+                nav a:focus {
+                    background: var(--accent);
+                    color: #fff;
+                    outline: none;
+                }
+
+        form {
+            background: var(--card);
+            border: 1px solid #e5e7eb;
+            border-radius: var(--radius);
+            padding: 1.25rem 1.5rem;
+            box-shadow: var(--shadow);
+            display: grid;
+            gap: 1rem;
+            max-width: 420px;
+        }
+
+        label {
+            display: flex;
+            flex-direction: column;
+            gap: .35rem;
+            font-weight: 500;
+        }
+
+        input[type=month] {
+            padding: .55rem .75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color var(--transition), box-shadow var(--transition);
+        }
+
+            input[type=month]:focus {
+                outline: none;
+                border-color: var(--accent);
+                box-shadow: 0 0 0 3px rgba(0,102,255,.15);
+            }
+
+        button {
+            justify-self: start;
+            padding: .55rem 1.15rem;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #fff;
+            background: var(--accent);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+
+            button:hover {
+                background: var(--accent-dark);
+            }
+
+        .checkbox-label {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            margin-top: .5rem;
+            font-weight: 400;
+            cursor: pointer;
+        }
+
+        input[type=checkbox] {
+            width: 1rem;
+            height: 1rem;
+            accent-color: var(--accent);
+        }
+
+        #loading {
+            margin-top: 1rem;
+            font-weight: 600;
+            color: var(--muted);
+        }
+
+        #errorBox {
+            margin-top: 1rem;
+            color: var(--danger);
+            font-weight: 500;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+            background: var(--card);
+            border: 1px solid #e5e7eb;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        th, td {
+            padding: .75rem .9rem;
+            text-align: center;
+            font-size: .95rem;
+        }
+
+        th {
+            background: #f3f4f6;
+            font-weight: 600;
+        }
+
+        tbody tr:nth-child(odd) {
+            background: #fafafa;
+        }
+
+        tbody tr:hover {
+            background: #f0f5ff;
+        }
+
+        .official {
+            background: #ffe5e5;
+            color: var(--danger);
+        }
+
+        .hiddenRow {
+            display: none;
+        }
+
+        @media (max-width:600px) {
+            nav {
+                justify-content: center;
+            }
+
+            table {
+                font-size: .875rem;
+            }
+
+            th, td {
+                padding: .5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a class="back" href="/academic/dashboard.html">← Back to Dashboard</a>
+
+    <h1>Attendance (Monthly)</h1>
+
+    <nav aria-label="Secondary">
+        <a href="/academic/performance.html">Performance</a>
+        <a href="/academic/attendance.html">Attendance</a>
+        <a href="/academic/payroll.html">Payroll</a>
+        <a href="/academic/deductions.html">Deductions</a>
+        <a href="/academic/apply_leave.html">Apply Leave</a>
+        <a href="/academic/leaves_status.html">Leave Status</a>
+    </nav>
+
+    <h3>Check your attendance</h3>
+
+    <form id="attendanceForm" aria-label="Monthly attendance lookup">
+        <label>
+            Month
+            <input type="month" name="month" required />
+        </label>
+        <button type="submit">Load Attendance</button>
+    </form>
+
+    <label class="checkbox-label">
+        <input type="checkbox" id="toggleOfficial" checked />
+        Show official day offs
+    </label>
+
+    <div id="loading" aria-live="polite"></div>
+    <div id="errorBox" aria-live="assertive"></div>
+
+    <table id="attendanceTable" style="display:none;" aria-label="Attendance records">
+        <thead>
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Status</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        const form = document.getElementById('attendanceForm');
+        const table = document.getElementById('attendanceTable');
+        const tbody = table.querySelector('tbody');
+        const loading = document.getElementById('loading');
+        const errorBox = document.getElementById('errorBox');
+        const toggleOfficial = document.getElementById('toggleOfficial');
+
+        form.addEventListener('submit', async e => {
+            e.preventDefault();
+            const month = form.elements['month'].value;
+
+            loading.textContent = 'Loading…';
+            errorBox.textContent = '';
+            tbody.innerHTML = '';
+            table.style.display = 'none';
+
+            try {
+                const res = await fetch(`/academic/attendance?month=${month}&employee_id=1`);
+                const data = await res.json();
+
+                if (!Array.isArray(data)) throw new Error('Invalid response');
+
+                loading.textContent = '';
+
+                if (data.length === 0) {
+                    errorBox.textContent = 'No attendance records found.';
+                    return;
+                }
+
+                data.forEach(row => {
+                    const tr = document.createElement('tr');
+                    const isOfficial = row.status && row.status.toLowerCase().includes('official');
+
+                    tr.innerHTML = `
+                <td>${row.date || row.att_date || '—'}</td>
+                <td class="${isOfficial ? 'official' : ''}">
+                  ${row.status || '—'}
+                </td>
+              `;
+
+                    if (isOfficial && !toggleOfficial.checked) tr.classList.add('hiddenRow');
+                    tbody.appendChild(tr);
+                });
+
+                table.style.display = 'table';
+
+            } catch (err) {
+                loading.textContent = '';
+                errorBox.textContent = 'Error: ' + err.message;
+            }
+        });
+
+        toggleOfficial.addEventListener('change', () => {
+            tbody.querySelectorAll('tr').forEach(row => {
+                const isOfficial = row.querySelector('.official');
+                if (isOfficial) row.classList.toggle('hiddenRow', !toggleOfficial.checked);
+            });
+        });
+    </script>
+</body>
+</html>
