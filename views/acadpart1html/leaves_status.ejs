@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Leaves Status</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <style>
+        :root {
+            --accent: #0066ff;
+            --accent-dark: #0043a8;
+            --bg: #f7f9fc;
+            --card: #ffffff;
+            --text: #111826;
+            --muted: #6b7280;
+            --success: #16a34a;
+            --warning: #b06;
+            --danger: #e11d48;
+            --radius: 12px;
+            --shadow: 0 2px 6px rgba(0,0,0,.05);
+            --transition: .25s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.55;
+            min-height: 100vh;
+            padding: clamp(1.2rem, 4vw, 2.5rem);
+        }
+
+        a.back {
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            margin-bottom: 1.2rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition);
+        }
+
+            a.back:hover {
+                color: var(--accent-dark);
+            }
+
+        h1 {
+            margin: 0 0 .25rem;
+            font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+            font-weight: 600;
+        }
+
+        h3 {
+            margin: 1.2rem 0 .6rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .6rem;
+            margin-bottom: 1.5rem;
+        }
+
+            nav a {
+                padding: .45rem .85rem;
+                border-radius: var(--radius);
+                text-decoration: none;
+                color: var(--accent);
+                font-weight: 500;
+                background: transparent;
+                transition: background var(--transition), color var(--transition);
+            }
+
+                nav a:hover,
+                nav a:focus {
+                    background: var(--accent);
+                    color: #fff;
+                    outline: none;
+                }
+
+        form {
+            background: var(--card);
+            border: 1px solid #e5e7eb;
+            border-radius: var(--radius);
+            padding: 1.25rem 1.5rem;
+            box-shadow: var(--shadow);
+            display: grid;
+            gap: 1rem;
+            max-width: 420px;
+        }
+
+        label {
+            display: flex;
+            flex-direction: column;
+            gap: .35rem;
+            font-weight: 500;
+        }
+
+        input[type=month] {
+            padding: .55rem .75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color var(--transition), box-shadow var(--transition);
+        }
+
+            input[type=month]:focus {
+                outline: none;
+                border-color: var(--accent);
+                box-shadow: 0 0 0 3px rgba(0,102,255,.15);
+            }
+
+        button {
+            justify-self: start;
+            padding: .55rem 1.15rem;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #fff;
+            background: var(--accent);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+
+            button:hover {
+                background: var(--accent-dark);
+            }
+
+        #loading {
+            margin-top: 1rem;
+            font-weight: 600;
+            color: var(--muted);
+        }
+
+        .alert {
+            margin-top: 1rem;
+            font-weight: 500;
+            padding: .75rem .9rem;
+            border-radius: var(--radius);
+            display: none;
+        }
+
+            .alert.error {
+                color: var(--danger);
+                background: #fee2e2;
+            }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+            background: var(--card);
+            border: 1px solid #e5e7eb;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            display: none;
+        }
+
+        th, td {
+            padding: .75rem .9rem;
+            text-align: center;
+            font-size: .95rem;
+        }
+
+        th {
+            background: #f3f4f6;
+            font-weight: 600;
+        }
+
+        tbody tr:nth-child(odd) {
+            background: #fafafa;
+        }
+
+        tbody tr:hover {
+            background: #f0f5ff;
+        }
+
+        .status-pending {
+            color: var(--warning);
+            font-weight: 600;
+        }
+
+        .status-approved {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .status-rejected {
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        .detailBtn {
+            padding: .35rem .65rem;
+            font-size: .875rem;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+
+            .detailBtn:hover {
+                background: var(--accent-dark);
+            }
+
+        @media (max-width:600px) {
+            nav {
+                justify-content: center;
+            }
+
+            table {
+                font-size: .875rem;
+            }
+
+            th, td {
+                padding: .5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a class="back" href="/academic/dashboard.html">← Back to Dashboard</a>
+
+    <h1>My Leaves Status</h1>
+
+    <nav aria-label="Secondary">
+        <a href="/academic/performance.html">Performance</a>
+        <a href="/academic/attendance.html">Attendance</a>
+        <a href="/academic/payroll.html">Payroll</a>
+        <a href="/academic/deductions.html">Deductions</a>
+        <a href="/academic/apply_leave.html">Apply Leave</a>
+        <a href="/academic/leaves_status.html">Leaves Status</a>
+    </nav>
+
+    <h3>View submitted leaves for a month</h3>
+
+    <form id="statusForm" aria-label="Leaves status filter">
+        <label>
+            Month
+            <input type="month" name="month" required>
+        </label>
+        <button type="submit">Load</button>
+    </form>
+
+    <div id="loading" aria-live="polite"></div>
+    <div id="errorBox" class="alert error" aria-live="assertive"></div>
+
+    <table id="leavesTable" aria-label="Leaves list">
+        <thead>
+            <tr>
+                <th scope="col">Type</th>
+                <th scope="col">Start Date</th>
+                <th scope="col">End Date</th>
+                <th scope="col">Replacement ID</th>
+                <th scope="col">Status</th>
+                <th scope="col">Details</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        const form = document.getElementById('statusForm');
+        const loading = document.getElementById('loading');
+        const errorBox = document.getElementById('errorBox');
+        const table = document.getElementById('leavesTable');
+        const tbody = table.querySelector('tbody');
+
+        form.addEventListener('submit', async e => {
+            e.preventDefault();
+            const month = form.elements['month'].value;
+
+            loading.textContent = 'Loading…';
+            errorBox.style.display = 'none';
+            tbody.innerHTML = '';
+            table.style.display = 'none';
+
+            try {
+                const res = await fetch(`/academic/leaves/status?month=${encodeURIComponent(month)}&employee_id=1`);
+                const data = await res.json();
+
+                loading.textContent = '';
+
+                if (!Array.isArray(data) || data.length === 0) {
+                    errorBox.textContent = 'No leaves found for this month.';
+                    errorBox.style.display = 'block';
+                    return;
+                }
+
+                data.forEach(item => {
+                    const tr = document.createElement('tr');
+
+                    const statusClass = (item.status || '').toLowerCase();
+                    let cls = '';
+                    if (statusClass.includes('pend')) cls = 'status-pending';
+                    else if (statusClass.includes('approv')) cls = 'status-approved';
+                    else if (statusClass.includes('reject')) cls = 'status-rejected';
+
+                    tr.innerHTML = `
+                <td>${item.leave_type || item.type || '—'}</td>
+                <td>${item.start_date || item.from_date || '—'}</td>
+                <td>${item.end_date || item.to_date || '—'}</td>
+                <td>${item.replacement_emp || item.replacement || '—'}</td>
+                <td class="${cls}">${item.status || '—'}</td>
+                <td><button type="button" data-id="${item.leave_id || item.id || ''}" class="detailBtn">View</button></td>
+              `;
+
+                    tbody.appendChild(tr);
+                });
+
+                table.style.display = 'table';
+
+            } catch (err) {
+                loading.textContent = '';
+                errorBox.textContent = 'Error: ' + err.message;
+                errorBox.style.display = 'block';
+            }
+        });
+
+        // Detail button handler (client-side mock for now)
+        document.addEventListener('click', e => {
+            if (!e.target.classList.contains('detailBtn')) return;
+            const id = e.target.getAttribute('data-id');
+            alert('Details for leave id: ' + (id || '(no id provided)'));
+        });
+    </script>
+</body>
+</html>
