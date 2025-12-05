@@ -150,7 +150,7 @@ exports.Update_Attendance = async (req, res) => {
 //7
 exports.Add_holiday = async (req, res) => {
     try {
-        await adminService.Add_holiday(req.body.holiday_name, 10, req.body.from_date, req.body.to_date); 
+        await adminService.Add_holiday(req.body.holiday_name, req.body.from_date, req.body.to_date); 
         req.flash('success', 'Holiday generated successfully');
         res.redirect('/admin/dashboard1');
     } catch (error) {
