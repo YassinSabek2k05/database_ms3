@@ -126,8 +126,6 @@ exports.approveAnnual = async (request_ID, upperboard_ID, replacement_ID) => {
 };
 
 // 7. EVALUATE EMPLOYEE (DEAN)
-// NOTE: your SQL proc Dean_andHR_Evaluation expects (employee_ID, rating, comment, semester).
-// We call it with those exact params (we do NOT alter the DB).
 exports.evaluateEmployee = async (employee_ID, rating, comment, semester) => {
     try {
         const pool = await sql.connect(config);
@@ -325,3 +323,4 @@ exports.getMyDeductions = async (employee_ID, month) => {
         return [];
     }
 };
+
